@@ -3,6 +3,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="uk.ac.hope.mcse.android.coursework.MainActivity">
     <item
+        android:id="@+id/action_orders"
+        android:title="Orders"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_deals"
+        android:title="Deals"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_account"
+        android:title="Account"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"
