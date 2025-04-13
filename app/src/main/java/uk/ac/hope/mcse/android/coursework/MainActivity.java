@@ -14,14 +14,26 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import uk.ac.hope.mcse.android.coursework.databinding.ActivityMainBinding;
+import uk.ac.hope.mcse.android.coursework.model.AppDatabase;
+import uk.ac.hope.mcse.android.coursework.model.User;
+import uk.ac.hope.mcse.android.coursework.model.UserDao;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
+import androidx.room.Room;
+
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
     private ActivityMainBinding binding;
+
+    public static User currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,11 +51,30 @@ public class MainActivity extends AppCompatActivity {
         binding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Order Doggs", Snackbar.LENGTH_LONG)
                         .setAnchorView(R.id.fab)
                         .setAction("Action", null).show();
             }
         });
+
+        navController.addOnDestinationChangedListener(
+            new NavController.OnDestinationChangedListener() {
+                @Override
+                public void onDestinationChanged(@NonNull NavController controller,
+                                                 @NonNull NavDestination destination,
+                                                 @Nullable Bundle arguments) {
+                    if (destination.getId() == R.id.FirstFragment) {
+                        binding.fab.show(); // Hides the FAB
+                    } else {
+                        binding.fab.show(); // Shows the FAB
+                    }
+                }
+            });
+
+        AppDatabase db = Room.databaseBuilder(this,
+                AppDatabase.class, "UpDoggData").allowMainThreadQueries().build();
+
+        UserDao userDao = db.userDao();
     }
 
     @Override

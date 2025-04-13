@@ -4,32 +4,127 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="24dp"
+    android:background="#FFF8F4"
     tools:context=".SecondFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="16dp">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_gravity="center"
+        android:layout_marginBottom="40dp">
 
-        <Button
-            android:id="@+id/button_second"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/previous"
-            app:layout_constraintBottom_toTopOf="@id/textview_second"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
+        <!-- Welcome Message -->
         <TextView
-            android:id="@+id/textview_second"
+            android:id="@+id/welcome_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/lorem_ipsum"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/button_second" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:text="Welcome back!"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#6A1B9A"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Stamp Book (Images in circular buttons) -->
+        <!-- Stamp Book (Images in circular buttons) -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/rounded_container"
+            android:padding="16dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_horizontal">
+
+                <ImageView
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:src="@drawable/stamp"
+                    android:layout_margin="4dp"
+                    android:contentDescription="Stamp 1" />
+
+                <ImageView
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:src="@drawable/stamp"
+                    android:layout_margin="4dp"
+                    android:contentDescription="Stamp 2" />
+
+                <ImageView
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:src="@drawable/stamp"
+                    android:layout_margin="4dp"
+                    android:contentDescription="Stamp 3" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="8dp">
+
+                <ImageView
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:src="@drawable/stamp"
+                    android:layout_margin="4dp"
+                    android:contentDescription="Stamp 4" />
+
+                <ImageView
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:src="@drawable/stamp"
+                    android:layout_margin="4dp"
+                    android:contentDescription="Stamp 5" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Deals and Orders buttons -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="24dp">
+
+            <ImageButton
+                android:id="@+id/deals_button"
+                android:layout_width="140dp"
+                android:layout_height="180dp"
+                android:layout_marginEnd="12dp"
+                android:src="@drawable/stamp"
+                android:scaleType="centerCrop"
+                android:background="@drawable/rounded_button"
+                android:contentDescription="Deals" />
+
+            <ImageButton
+                android:id="@+id/orders_button"
+                android:layout_width="140dp"
+                android:layout_height="180dp"
+                android:src="@drawable/stamp"
+                android:scaleType="centerCrop"
+                android:background="@drawable/rounded_button"
+                android:contentDescription="Orders" />
+        </LinearLayout>
+
+        <!-- Rewards Button -->
+        <ImageButton
+            android:id="@+id/rewards_button"
+            android:layout_width="300dp"
+            android:layout_height="140dp"
+            android:src="@drawable/stamp"
+            android:scaleType="centerCrop"
+            android:background="@drawable/rounded_button"
+            android:contentDescription="Rewards" />
+
+    </LinearLayout>
 </androidx.core.widget.NestedScrollView>
