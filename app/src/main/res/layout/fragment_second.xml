@@ -29,102 +29,110 @@
 
         <!-- Stamp Book (Images in circular buttons) -->
         <!-- Stamp Book (Images in circular buttons) -->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginBottom="24dp"
-            android:background="@drawable/rounded_container"
-            android:padding="16dp">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_horizontal">
-
-                <ImageView
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:src="@drawable/stamp"
-                    android:layout_margin="4dp"
-                    android:contentDescription="Stamp 1" />
-
-                <ImageView
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:src="@drawable/stamp"
-                    android:layout_margin="4dp"
-                    android:contentDescription="Stamp 2" />
-
-                <ImageView
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:src="@drawable/stamp"
-                    android:layout_margin="4dp"
-                    android:contentDescription="Stamp 3" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_horizontal"
-                android:layout_marginTop="8dp">
-
-                <ImageView
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:src="@drawable/stamp"
-                    android:layout_margin="4dp"
-                    android:contentDescription="Stamp 4" />
-
-                <ImageView
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:src="@drawable/stamp"
-                    android:layout_margin="4dp"
-                    android:contentDescription="Stamp 5" />
-            </LinearLayout>
-        </LinearLayout>
 
         <!-- Deals and Orders buttons -->
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="332dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/rounded_container"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/stamp_1"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_margin="4dp"
+                    android:contentDescription="Stamp 1"
+                    android:src="@drawable/empty" />
+
+                <ImageView
+                    android:id="@+id/stamp_2"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_margin="4dp"
+                    android:contentDescription="Stamp 2"
+                    android:src="@drawable/empty" />
+
+                <ImageView
+                    android:id="@+id/stamp_3"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_margin="4dp"
+                    android:contentDescription="Stamp 3"
+                    android:src="@drawable/empty" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="-15dp"
+                android:gravity="center_horizontal"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/stamp_4"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_margin="4dp"
+                    android:contentDescription="Stamp 4"
+                    android:src="@drawable/empty" />
+
+                <ImageView
+                    android:id="@+id/stamp_5"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_margin="4dp"
+                    android:contentDescription="Stamp 5"
+                    android:src="@drawable/empty" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="332dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
             android:gravity="center"
-            android:layout_marginBottom="24dp">
+            android:orientation="horizontal">
 
             <ImageButton
                 android:id="@+id/deals_button"
-                android:layout_width="140dp"
-                android:layout_height="180dp"
+                android:layout_width="160dp"
+                android:layout_height="210dp"
                 android:layout_marginEnd="12dp"
-                android:src="@drawable/stamp"
-                android:scaleType="centerCrop"
-                android:background="@drawable/rounded_button"
-                android:contentDescription="Deals" />
+                android:background="@drawable/rounded_container"
+                android:contentDescription="Deals"
+                android:scaleType="fitXY"
+                android:src="@drawable/deals"
+                android:padding="2dp"/>
 
             <ImageButton
-                android:id="@+id/orders_button"
-                android:layout_width="140dp"
-                android:layout_height="180dp"
-                android:src="@drawable/stamp"
-                android:scaleType="centerCrop"
-                android:background="@drawable/rounded_button"
-                android:contentDescription="Orders" />
+                android:id="@+id/menu_button"
+                android:layout_width="160dp"
+                android:layout_height="210dp"
+                android:background="@drawable/rounded_container"
+                android:contentDescription="Menu"
+                android:scaleType="fitXY"
+                android:src="@drawable/menu"
+                android:padding="2dp"/>
         </LinearLayout>
 
         <!-- Rewards Button -->
         <ImageButton
             android:id="@+id/rewards_button"
-            android:layout_width="300dp"
+            android:layout_width="332dp"
             android:layout_height="140dp"
-            android:src="@drawable/stamp"
-            android:scaleType="centerCrop"
-            android:background="@drawable/rounded_button"
-            android:contentDescription="Rewards" />
+            android:background="@drawable/rounded_container"
+            android:contentDescription="Rewards"
+            android:scaleType="fitXY"
+            android:src="@drawable/rewards"
+            android:padding="2dp"/>
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

@@ -10,4 +10,7 @@ public interface UserDao {
 
     @Query("SELECT * FROM User WHERE username = :username LIMIT 1")
     User findByUsername(String username);
+
+    @Query("UPDATE User SET stamps = :stamps WHERE username = :username")
+    void updateStamps(String username, int stamps);
 }

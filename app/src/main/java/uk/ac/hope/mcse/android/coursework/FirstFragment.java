@@ -47,12 +47,12 @@ public class FirstFragment extends Fragment {
             String username = binding.edittextUsername.getText().toString().trim();
             String password = binding.edittextPassword.getText().toString().trim();
 
-            if (username.isEmpty() || password.isEmpty()) {
-                Toast.makeText(getContext(), "Please enter both username and password", Toast.LENGTH_SHORT).show();
-            }
-
             AppDatabase db = Room.databaseBuilder(requireContext(),
-                    AppDatabase.class, "my-database-name").allowMainThreadQueries().build();
+                            AppDatabase.class, "UpDoggData")
+                    .fallbackToDestructiveMigration()
+                    .allowMainThreadQueries()
+                    .build();
+
             UserDao userDao = db.userDao();
 
             User user = userDao.findByUsername(username);
@@ -60,13 +60,16 @@ public class FirstFragment extends Fragment {
             if (user == null || !user.password.equals(password)) {
                 Toast.makeText(getContext(), "Username or password is incorrect", Toast.LENGTH_SHORT).show();
             } else {
+
+                MainActivity.currentUser = new User();
+                MainActivity.currentUser.setUsername(username);
+                MainActivity.currentUser.setStamps(user.getStamps());
+
                 // Inputs are valid – navigate to the next fragment
                 Toast.makeText(getContext(), "Welcome back, " + user.username, Toast.LENGTH_SHORT).show();
                 NavHostFragment.findNavController(FirstFragment.this)
                         .navigate(R.id.action_FirstFragment_to_SecondFragment);
 
-                MainActivity.currentUser = new User();
-                MainActivity.currentUser.setUsername(username);
             }
         });
 
@@ -100,7 +103,8 @@ public class FirstFragment extends Fragment {
 
                     // Insert into database
                     AppDatabase db = Room.databaseBuilder(requireContext(),
-                                    AppDatabase.class, "my-database-name")
+                                    AppDatabase.class, "UpDoggData")
+                            .fallbackToDestructiveMigration()
                             .allowMainThreadQueries()
                             .build();
 
