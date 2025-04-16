@@ -12,7 +12,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDestination;
+import androidx.navigation.NavHostController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.room.Room;
@@ -41,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     public static User currentUser;
     public static List<MenuItems> menuItems = new ArrayList<>();
     public static List<MenuItems> basket = new ArrayList<>();
+    public static List<String> rewards = new ArrayList<>();
     public static AppDatabase db;
 
     // Replace this with your actual published sheet CSV URL
@@ -78,6 +81,18 @@ public class MainActivity extends AppCompatActivity {
                             binding.fab.hide();
                         } else {
                             binding.fab.show();
+                            if(destination.getId() == R.id.SecondFragment) {
+                                binding.fab.setImageResource(R.drawable.hotdog_fab);
+                                binding.fab.setOnClickListener(v -> {
+                                    navController.navigate(R.id.action_SecondFragment_to_ThirdFragment);
+                                });
+                            } else if (destination.getId() == R.id.ThirdFragment) {
+                                binding.fab.setImageResource(R.drawable.cart_fab);
+                            } else if (destination.getId() == R.id.ForthFragment) {
+                                binding.fab.setOnClickListener(v -> {
+                                    navController.navigate(R.id.action_ForthFragment_to_ThirdFragment);
+                                });
+                            }
                         }
                     }
                 });
@@ -221,14 +236,25 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+
         if (id == R.id.action_settings) {
             return true;
+        } else if (id == R.id.action_logout) {
+            currentUser = new User();
+
+            NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+            navController.navigate(R.id.FirstFragment);
+
+            return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
+
 
     @Override
     public boolean onSupportNavigateUp() {

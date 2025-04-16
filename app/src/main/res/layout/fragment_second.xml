@@ -31,68 +31,91 @@
         <!-- Stamp Book (Images in circular buttons) -->
 
         <!-- Deals and Orders buttons -->
-        <LinearLayout
+        <!-- Stamp/Voucher container -->
+        <FrameLayout
+            android:id="@+id/stamp_container"
             android:layout_width="332dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:background="@drawable/rounded_container"
-            android:orientation="vertical">
+            android:layout_marginBottom="24dp">
 
+            <!-- Original stamp layout (keep as is) -->
             <LinearLayout
+                android:id="@+id/stamp_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal">
+                android:background="@drawable/rounded_container"
+                android:orientation="vertical">
 
-                <ImageView
-                    android:id="@+id/stamp_1"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_margin="4dp"
-                    android:contentDescription="Stamp 1"
-                    android:src="@drawable/empty" />
+                <!-- Top row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
 
-                <ImageView
-                    android:id="@+id/stamp_2"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_margin="4dp"
-                    android:contentDescription="Stamp 2"
-                    android:src="@drawable/empty" />
+                    <ImageView
+                        android:id="@+id/stamp_1"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_margin="4dp"
+                        android:contentDescription="Stamp 1"
+                        android:src="@drawable/empty" />
 
-                <ImageView
-                    android:id="@+id/stamp_3"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_margin="4dp"
-                    android:contentDescription="Stamp 3"
-                    android:src="@drawable/empty" />
+                    <ImageView
+                        android:id="@+id/stamp_2"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_margin="4dp"
+                        android:contentDescription="Stamp 2"
+                        android:src="@drawable/empty" />
+
+                    <ImageView
+                        android:id="@+id/stamp_3"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_margin="4dp"
+                        android:contentDescription="Stamp 3"
+                        android:src="@drawable/empty" />
+                </LinearLayout>
+
+                <!-- Bottom row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-15dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/stamp_4"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_margin="4dp"
+                        android:contentDescription="Stamp 4"
+                        android:src="@drawable/empty" />
+
+                    <ImageView
+                        android:id="@+id/stamp_5"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:layout_margin="4dp"
+                        android:contentDescription="Stamp 5"
+                        android:src="@drawable/empty" />
+                </LinearLayout>
             </LinearLayout>
 
-            <LinearLayout
+            <!-- Voucher view (initially hidden) -->
+            <ImageView
+                android:id="@+id/voucher_image"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="-15dp"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/stamp_4"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_margin="4dp"
-                    android:contentDescription="Stamp 4"
-                    android:src="@drawable/empty" />
-
-                <ImageView
-                    android:id="@+id/stamp_5"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_margin="4dp"
-                    android:contentDescription="Stamp 5"
-                    android:src="@drawable/empty" />
-            </LinearLayout>
-        </LinearLayout>
+                android:layout_marginStart="-5dp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY"
+                android:src="@drawable/voucher"
+                android:visibility="gone"
+                android:contentDescription="Voucher" />
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="332dp"

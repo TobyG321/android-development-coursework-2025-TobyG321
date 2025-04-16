@@ -5,6 +5,7 @@
     <string name="first_fragment_label">UpDogg</string>
     <string name="second_fragment_label">Home</string>
     <string name="third_fragment_label">Menu</string>
+    <string name="forth_fragment_label">Rewards</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 </resources>

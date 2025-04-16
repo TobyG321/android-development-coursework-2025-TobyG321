@@ -64,6 +64,7 @@ public class FirstFragment extends Fragment {
                 MainActivity.currentUser = new User();
                 MainActivity.currentUser.setUsername(username);
                 MainActivity.currentUser.setStamps(user.getStamps());
+                MainActivity.currentUser.setPoints(6000);
 
                 // Inputs are valid – navigate to the next fragment
                 Toast.makeText(getContext(), "Welcome back, " + user.username, Toast.LENGTH_SHORT).show();

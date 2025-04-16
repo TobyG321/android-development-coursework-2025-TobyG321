@@ -13,4 +13,7 @@ public interface UserDao {
 
     @Query("UPDATE User SET stamps = :stamps WHERE username = :username")
     void updateStamps(String username, int stamps);
+
+    @Query("UPDATE User SET points = :points WHERE username = :username")
+    void updatePoints(String username, int points);
 }

@@ -1,0 +1,152 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rewards_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp">
+
+    <!-- Backgroun
+    d Bar -->
+    <View
+        android:id="@+id/background_bar"
+        android:layout_width="8dp"
+        android:layout_height="1010dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:background="@color/black" />
+
+    <!-- Foreground Progress Fill -->
+    <View
+        android:id="@+id/progress_fill"
+        android:layout_width="8dp"
+        android:layout_alignStart="@id/background_bar"
+        android:layout_alignBottom="@id/background_bar"
+        android:background="@color/green"
+        android:layout_height="0dp" />
+
+    <!-- Reward Panels -->
+    <View
+        android:id="@+id/anchor_500"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_alignBottom="@+id/reward_500"
+        android:layout_marginStart="100dp"
+        android:layout_marginBottom="19dp"
+        android:visibility="invisible" />
+
+    <ImageButton
+        android:id="@+id/rewardbox_500"
+        android:layout_width="345dp"
+        android:layout_height="66dp"
+        android:layout_below="@id/anchor_500"
+        android:layout_alignStart="@id/reward_5000"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="0dp"
+        android:background="@drawable/rounded_container"
+        android:scaleType="fitXY"
+        android:padding="2dp"
+        android:src="@drawable/reward_fries"/>
+
+    <TextView
+        android:id="@+id/reward_500"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/background_bar"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="66dp"
+        android:layout_toEndOf="@id/background_bar"
+        android:text="🎁 500 pts" />
+
+    <View
+        android:id="@+id/anchor_1500"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_alignBottom="@+id/reward_1500"
+        android:layout_marginStart="100dp"
+        android:layout_marginBottom="19dp"
+        android:visibility="invisible" />
+
+    <ImageButton
+        android:id="@+id/rewardbox_1500"
+        android:layout_width="345dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/reward_500"
+        android:layout_below="@id/anchor_1500"
+        android:layout_alignStart="@id/reward_5000"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="0dp"
+        android:background="@drawable/rounded_container"
+        android:scaleType="fitXY"
+        android:padding="2dp"
+        android:src="@drawable/reward_meal"/>
+
+
+    <TextView
+        android:id="@+id/reward_1500"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/background_bar"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="218dp"
+        android:layout_toEndOf="@id/background_bar"
+        android:text="🎁 1500 pts" />
+
+    <View
+        android:id="@+id/anchor_3000"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_alignBottom="@+id/reward_3000"
+        android:layout_marginStart="100dp"
+        android:layout_marginBottom="19dp"
+        android:visibility="invisible" />
+
+    <ImageButton
+        android:id="@+id/rewardbox_3000"
+        android:layout_width="345dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/reward_1500"
+        android:layout_below="@id/anchor_3000"
+        android:layout_alignStart="@id/reward_5000"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="0dp"
+        android:background="@drawable/rounded_container"
+        android:scaleType="fitXY"
+        android:padding="2dp"
+        android:src="@drawable/reward_dog" />
+
+    <TextView
+        android:id="@+id/reward_3000"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/background_bar"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="460dp"
+        android:layout_toEndOf="@id/background_bar"
+        android:text="🎁 3000 pts" />
+
+    <ImageButton
+        android:id="@+id/rewardbox_5000"
+        android:layout_width="345dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/reward_3000"
+        android:layout_below="@id/reward_5000"
+        android:layout_alignStart="@id/reward_5000"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="0dp"
+        android:background="@drawable/rounded_container"
+        android:scaleType="fitXY"
+        android:padding="2dp"
+        android:src="@drawable/reward_banquet" />
+
+    <TextView
+        android:id="@+id/reward_5000"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="🎁 5000 pts"
+        android:layout_toEndOf="@id/background_bar"
+        android:layout_marginStart="16dp"
+        android:layout_alignTop="@id/background_bar" />
+
+    <!-- Horizontal Reward Panels -->
+
+
+</RelativeLayout>

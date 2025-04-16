@@ -43,10 +43,6 @@ public class SecondFragment extends Fragment {
                     MainActivity.currentUser.getUsername(),
                     MainActivity.currentUser.getStamps()
             );
-
-            // Then navigate
-            NavHostFragment.findNavController(SecondFragment.this)
-                    .navigate(R.id.action_SecondFragment_to_FirstFragment);
         });
 
         binding.menuButton.setOnClickListener(v -> {
@@ -54,12 +50,16 @@ public class SecondFragment extends Fragment {
                     .navigate(R.id.action_SecondFragment_to_ThirdFragment);
         });
 
+        binding.rewardsButton.setOnClickListener(v -> {
+            NavHostFragment.findNavController(SecondFragment.this)
+                    .navigate(R.id.to_rewards);
+        });
+
         if (MainActivity.currentUser != null) {
             String name = MainActivity.currentUser.getUsername();
             binding.welcomeText.setText("Welcome back, " + name + "!");
         }
 
-        int stamps = MainActivity.currentUser.getStamps();
         ImageView[] stampViews = {
                 binding.stamp1,
                 binding.stamp2,
@@ -68,20 +68,32 @@ public class SecondFragment extends Fragment {
                 binding.stamp5
         };
 
-        Random random = new Random();
-        for (int i = 0; i < stampViews.length; i++) {
-            int angle = random.nextInt(361); // random angle between 0 and 360 degrees
-            if (i < stamps) {
-                stampViews[i].setImageResource(R.drawable.stamp); // filled
-                stampViews[i].setRotation(angle);
-            } else if (i == stamps) {
-                stampViews[i].setImageResource(
-                        new int[]{R.drawable.empty1, R.drawable.empty2, R.drawable.empty3, R.drawable.empty4, R.drawable.empty5}[i]
-                ); // highlighted next stamp
-            } else {
-                stampViews[i].setImageResource(R.drawable.empty); // unfilled
+        int stamps = MainActivity.currentUser.getStamps();
+
+        if (stamps < 5) {
+            binding.stampLayout.setVisibility(View.VISIBLE);
+            binding.voucherImage.setVisibility(View.GONE);
+
+            Random random = new Random();
+            for (int i = 0; i < stampViews.length; i++) {
+                int angle = random.nextInt(361);
+                if (i < stamps) {
+                    stampViews[i].setImageResource(R.drawable.stamp);
+                    stampViews[i].setRotation(angle);
+                } else if (i == stamps) {
+                    stampViews[i].setImageResource(
+                            new int[]{R.drawable.empty1, R.drawable.empty2, R.drawable.empty3, R.drawable.empty4, R.drawable.empty5}[i]
+                    );
+                } else {
+                    stampViews[i].setImageResource(R.drawable.empty);
+                }
             }
+        } else {
+            // User has 5 or more stamps, show voucher
+            binding.stampLayout.setVisibility(View.GONE);
+            binding.voucherImage.setVisibility(View.VISIBLE);
         }
+
     }
 
     @Override

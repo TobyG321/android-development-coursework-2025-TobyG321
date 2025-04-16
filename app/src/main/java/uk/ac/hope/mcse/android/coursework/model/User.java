@@ -19,6 +19,9 @@ public class User {
     @ColumnInfo(name = "stamps")
     public int stamps = 0;
 
+    @ColumnInfo(name = "points")
+    public int points = 0;
+
     public void setUsername(String name){
         username = name;
     }
@@ -46,5 +49,13 @@ public class User {
 
     public void clearStamps(){
         stamps = 0;
+    }
+
+    public int getPoints(){
+        return points;
+    }
+
+    public void setPoints(int count){
+        points = count;
     }
 }
