@@ -1,0 +1,112 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fillViewport="true"
+    android:padding="16dp"
+    android:maxHeight="300dp" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Dog Name -->
+        <TextView
+            android:id="@+id/hotdog_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Seattle"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#6A1B9A"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Image -->
+        <ImageView
+            android:id="@+id/hotdog_image"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:src="@drawable/seattle"
+            android:contentDescription="Hotdog Image"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Section Builder -->
+        <!-- Bread -->
+        <TextView style="@style/CategoryHeader"
+            android:text="Bread"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/grid_bread"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:flexWrap="wrap"
+            app:justifyContent="flex_start"
+            android:layout_marginBottom="12dp" />
+
+
+        <!-- Dog -->
+        <TextView style="@style/CategoryHeader"
+            android:text="Dog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/grid_dog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:flexWrap="wrap"
+            app:justifyContent="flex_start"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Cheese -->
+        <TextView style="@style/CategoryHeader"
+            android:text="Cheese"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/grid_cheese"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:flexWrap="wrap"
+            app:justifyContent="flex_start"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Sauces -->
+        <TextView style="@style/CategoryHeader"
+            android:text="Sauces"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/grid_sauces"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:flexWrap="wrap"
+            app:justifyContent="flex_start"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Toppings -->
+        <TextView style="@style/CategoryHeader"
+            android:text="Toppings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/grid_toppings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:flexWrap="wrap"
+            app:justifyContent="flex_start"
+            app:alignItems="flex_start"
+            android:paddingBottom="8dp" />
+    </LinearLayout>
+</ScrollView>

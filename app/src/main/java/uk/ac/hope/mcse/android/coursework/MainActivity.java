@@ -1,5 +1,6 @@
 package uk.ac.hope.mcse.android.coursework;
 
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,6 +35,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -163,8 +165,14 @@ public class MainActivity extends AppCompatActivity {
                 String region = cols[2].trim();
                 String price = cols[3].trim();
 
-                // Simplified category grouping (customize this logic if needed)
-                String bread = cols[4].trim().equals("1") ? "Brioche" : cols[5].trim().equals("1") ? "Wrap" : "N/A";
+                String bread =  cols[4].trim().equals("1") ? "Brioche" : cols[5].trim().equals("1") ? "Wrap" : "N/A";
+                String dog =    cols[6].trim().equals("1") ? "Frankfurter" :
+                                cols[7].trim().equals("1") ? "Ft Frank" :
+                                cols[8].trim().equals("1") ? "Short Frank" :
+                                cols[9].trim().equals("1") ? "Bratwurst" :
+                                cols[10].trim().equals("1") ? "Chorizo" :
+                                cols[11].trim().equals("1") ? "Bacon Wrapped" : "N/A";
+
                 StringBuilder cheese = new StringBuilder();
                 for (int j = 11; j <= 17; j++) {
                     if (cols.length > j && cols[j].trim().equals("1")) {
@@ -195,12 +203,15 @@ public class MainActivity extends AppCompatActivity {
                     item.last_update = lastUpdate;
                     item.region = region;
                     item.price = Double.parseDouble(price);
+                    item.dog = dog;
                     item.bread = bread;
                     item.cheese = cheese.toString();
                     item.sauces = sauces.toString();
                     item.toppings = toppings.toString();
 
-                    menuItems.add(item);
+                    if(!lastUpdate.equals("DELETED")) {
+                        menuItems.add(item);
+                    }
 
                     menuDao.insert(item);
                     Log.d("DB_INSERT", "Inserted: " + itemName);
@@ -209,6 +220,7 @@ public class MainActivity extends AppCompatActivity {
                     existing.last_update = lastUpdate;
                     existing.region = region;
                     existing.price = Double.parseDouble(price);
+                    existing.dog = dog;
                     existing.bread = bread;
                     existing.cheese = cheese.toString();
                     existing.sauces = sauces.toString();
@@ -262,4 +274,47 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
     }
+
+    public MenuItems getDogOfTheDay() {
+        SharedPreferences prefs = getSharedPreferences("DogOfTheDayPrefs", MODE_PRIVATE);
+        long lastChosenTime = prefs.getLong("lastChosenTime", 0);
+        String dogName = prefs.getString("dogName", null);
+
+        long currentTime = System.currentTimeMillis();
+        long timeLeft = (24 * 60 * 60 * 1000) - (currentTime - lastChosenTime);
+
+        if (dogName == null || timeLeft <= 0) {
+            // Choose a new dog
+            if (menuItems.isEmpty()) return null;
+
+            MenuItems randomDog = menuItems.get(new Random().nextInt(menuItems.size()));
+
+            // Save the selection
+            prefs.edit()
+                    .putString("dogName", randomDog.item_name)
+                    .putLong("lastChosenTime", currentTime)
+                    .apply();
+
+            Log.d("DOG_OF_DAY", "New Dog Selected: " + randomDog.item_name + " — 24h timer starts now.");
+            return randomDog;
+        } else {
+            // Log time remaining
+            long seconds = timeLeft / 1000 % 60;
+            long minutes = timeLeft / (1000 * 60) % 60;
+            long hours = timeLeft / (1000 * 60 * 60);
+
+            String timeFormatted = String.format("%02d:%02d:%02d", hours, minutes, seconds);
+            Log.d("DOG_OF_DAY", "Current Dog: " + dogName + " — Time left: " + timeFormatted);
+
+            for (MenuItems item : menuItems) {
+                if (item.item_name.equals(dogName)) {
+                    return item;
+                }
+            }
+        }
+
+        return null;
+    }
+
+
 }

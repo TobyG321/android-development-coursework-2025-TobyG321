@@ -25,6 +25,9 @@ public class MenuItems {
     @ColumnInfo(name = "bread")
     public String bread;
 
+    @ColumnInfo(name = "dog")
+    public String dog;
+
     @ColumnInfo(name = "cheese")
     public String cheese;
 

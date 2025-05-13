@@ -31,13 +31,17 @@
         <action
             android:id="@+id/to_rewards"
             app:destination="@id/ForthFragment" />
+
+        <action
+            android:id="@+id/action_SecondFragment_to_FifthFragment"
+            app:destination="@id/FifthFragment" />
+
     </fragment>
     <fragment
         android:id="@+id/ThirdFragment"
         android:name="uk.ac.hope.mcse.android.coursework.ThirdFragment"
         android:label="@string/third_fragment_label"
         tools:layout="@layout/fragment_third">
-
     </fragment>
 
     <fragment
@@ -49,7 +53,13 @@
         <action
             android:id="@+id/action_ForthFragment_to_ThirdFragment"
             app:destination="@id/ThirdFragment" />
+    </fragment>
 
+    <fragment
+        android:id="@+id/FifthFragment"
+        android:name="uk.ac.hope.mcse.android.coursework.FifthFragment"
+        android:label="Deals"
+        tools:layout="@layout/fragment_fifth">
     </fragment>
 
     <action

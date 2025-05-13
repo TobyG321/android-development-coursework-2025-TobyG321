@@ -10,6 +10,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -75,7 +77,6 @@ public class ThirdFragment extends Fragment {
             @Override public void onTabReselected(TabLayout.Tab tab) {}
         });
 
-        // Display USA items by default
         tabLayout.getTabAt(0).select();
         populateMenu("USA", view, usa, south, europe);
     }
@@ -99,7 +100,7 @@ public class ThirdFragment extends Fragment {
             itemLayout.setBackgroundResource(R.drawable.item_card_background);
 
             LinearLayout.LayoutParams itemParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
-            itemParams.setMargins(16, 16, 16, 16); // spacing between elements
+            itemParams.setMargins(16, 16, 16, 16);
             itemLayout.setLayoutParams(itemParams);
 
             TextView title = new TextView(getContext());
@@ -112,15 +113,9 @@ public class ThirdFragment extends Fragment {
 
             ImageView image = new ImageView(getContext());
             String imageName = item.item_name.toLowerCase().replace(" ", "");
-            int imageResId = getResources().getIdentifier(imageName, "drawable", getContext().getPackageName());
+            int imageResIdInitial = getResources().getIdentifier(imageName, "drawable", getContext().getPackageName());
 
-            if (imageResId != 0) {
-                image.setImageResource(imageResId);
-            } else {
-                Log.w("IMAGE_NOT_FOUND", "Missing image for: " + item.item_name + " -> fallback used.");
-                image.setImageResource(R.drawable.newyork);
-            }
-
+            image.setImageResource(imageResIdInitial != 0 ? imageResIdInitial : R.drawable.newyork);
             image.setAdjustViewBounds(true);
             image.setLayoutParams(new LinearLayout.LayoutParams(300, 300));
 
@@ -130,25 +125,63 @@ public class ThirdFragment extends Fragment {
 
             itemLayout.setOnClickListener(v -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setTitle(item.item_name);
+                LayoutInflater inflater = LayoutInflater.from(getContext());
+                View dialogView = inflater.inflate(R.layout.selection_popup, null);
 
-                StringBuilder message = new StringBuilder();
-                message.append("Price: £").append(item.price).append("\n\n");
-                if (item.bread != null && !item.bread.isEmpty())
-                    message.append("Bread: ").append(item.bread).append("\n");
-                if (item.cheese != null && !item.cheese.isEmpty())
-                    message.append("Cheese: ").append(item.cheese).append("\n");
-                if (item.sauces != null && !item.sauces.isEmpty())
-                    message.append("Sauces: ").append(item.sauces).append("\n");
-                if (item.toppings != null && !item.toppings.isEmpty())
-                    message.append("Toppings: ").append(item.toppings).append("\n");
+                // Removed items per category
+                List<String> removedBread = new ArrayList<>();
+                List<String> removedDog = new ArrayList<>();
+                List<String> removedCheese = new ArrayList<>();
+                List<String> removedSauces = new ArrayList<>();
+                List<String> removedToppings = new ArrayList<>();
 
-                builder.setMessage(message.toString());
+                TextView nameTextView = dialogView.findViewById(R.id.hotdog_name);
+                ImageView imageView = dialogView.findViewById(R.id.hotdog_image);
+                FlexboxLayout gridBread = dialogView.findViewById(R.id.grid_bread);
+                FlexboxLayout gridDog = dialogView.findViewById(R.id.grid_dog);
+                FlexboxLayout gridCheese = dialogView.findViewById(R.id.grid_cheese);
+                FlexboxLayout gridSauces = dialogView.findViewById(R.id.grid_sauces);
+                FlexboxLayout gridToppings = dialogView.findViewById(R.id.grid_toppings);
+
+                nameTextView.setText(item.item_name);
+
+                int imageResId = getResources().getIdentifier(
+                        item.item_name.toLowerCase().replace(" ", ""),
+                        "drawable", getContext().getPackageName());
+
+                imageView.setImageResource(imageResId != 0 ? imageResId : R.drawable.newyork);
+
+                populateGrid(gridBread, item.bread, removedBread);
+                populateGrid(gridDog, item.dog, removedDog);
+                populateGrid(gridCheese, item.cheese, removedCheese);
+                populateGrid(gridSauces, item.sauces, removedSauces);
+                populateGrid(gridToppings, item.toppings, removedToppings);
+
+                builder.setView(dialogView);
                 builder.setPositiveButton("ADD TO BASKET", (dialog, which) -> {
-                    MainActivity.menuItems.add(item);
-                    Toast.makeText(getContext(), item.item_name + " added to basket!", Toast.LENGTH_SHORT).show();
+                    StringBuilder summary = new StringBuilder("You removed:\n\n");
+                    if (!removedBread.isEmpty()) summary.append("Bread: ").append(removedBread).append("\n");
+                    if (!removedDog.isEmpty()) summary.append("Dog: ").append(removedDog).append("\n");
+                    if (!removedCheese.isEmpty()) summary.append("Cheese: ").append(removedCheese).append("\n");
+                    if (!removedSauces.isEmpty()) summary.append("Sauces: ").append(removedSauces).append("\n");
+                    if (!removedToppings.isEmpty()) summary.append("Toppings: ").append(removedToppings).append("\n");
+
+                    if (summary.toString().equals("You removed:\n\n")) {
+                        summary = new StringBuilder("No customisations made. Add to basket?");
+                    }
+
+                    new AlertDialog.Builder(getContext())
+                            .setTitle("Confirm Selection")
+                            .setMessage(summary.toString())
+                            .setPositiveButton("CONFIRM", (d2, w2) -> {
+                                MainActivity.menuItems.add(item);
+                                Toast.makeText(getContext(), item.item_name + " added to basket!", Toast.LENGTH_SHORT).show();
+                            })
+                            .setNegativeButton("CANCEL", null)
+                            .show();
                 });
 
+                builder.setNegativeButton("CANCEL", null);
                 builder.show();
             });
 
@@ -162,6 +195,60 @@ public class ThirdFragment extends Fragment {
             }
 
             currentRow.addView(itemLayout);
+        }
+    }
+
+    private void populateGrid(FlexboxLayout gridLayout, String csvData, List<String> removedItems) {
+        gridLayout.removeAllViews();
+
+        if (csvData != null && !csvData.trim().isEmpty() && !csvData.trim().equals("N/A")) {
+            String[] items = csvData.split(",");
+            for (String entry : items) {
+                if (!entry.equals(" ")){
+                    Button button = new Button(getContext());
+                    button.setText(entry.trim());
+                    button.setTextSize(12);
+                    button.setAllCaps(true);
+                    button.setBackgroundResource(R.drawable.rounded_container);
+                    button.setTag("enabled");
+
+                    button.setOnClickListener(v -> {
+                        String state = (String) button.getTag();
+                        String label = button.getText().toString();
+
+                        if ("enabled".equals(state)) {
+                            button.setBackgroundResource(R.drawable.rounded_container_disabled);
+                            button.setTag("disabled");
+                            removedItems.add(label);
+                        } else {
+                            button.setBackgroundResource(R.drawable.rounded_container);
+                            button.setTag("enabled");
+                            removedItems.remove(label);
+                        }
+                    });
+
+                    FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(
+                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT
+                    );
+                    params.setMargins(8, 8, 8, 8);
+                    gridLayout.addView(button, params);
+                }
+            }
+        } else {
+            Button placeholder = new Button(getContext());
+            placeholder.setText("None");
+            placeholder.setEnabled(false);
+            placeholder.setTextSize(12);
+            placeholder.setAllCaps(true);
+            placeholder.setBackgroundResource(R.drawable.rounded_container);
+
+            FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            );
+            params.setMargins(8, 8, 8, 8);
+            gridLayout.addView(placeholder, params);
         }
     }
 

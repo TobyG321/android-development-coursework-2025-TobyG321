@@ -55,6 +55,11 @@ public class SecondFragment extends Fragment {
                     .navigate(R.id.to_rewards);
         });
 
+        binding.dealsButton.setOnClickListener(v -> {
+            NavHostFragment.findNavController(SecondFragment.this)
+                    .navigate(R.id.action_SecondFragment_to_FifthFragment);
+        });
+
         if (MainActivity.currentUser != null) {
             String name = MainActivity.currentUser.getUsername();
             binding.welcomeText.setText("Welcome back, " + name + "!");
