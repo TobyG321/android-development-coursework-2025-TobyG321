@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -35,10 +37,23 @@ public class SecondFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        ViewCompat.setOnApplyWindowInsetsListener(binding.mainLayout, (v, insets) -> {
+            int topInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top;
+
+            v.setPadding(
+                    v.getPaddingLeft(),
+                    topInset,
+                    v.getPaddingRight(),
+                    v.getPaddingBottom()
+            );
+
+            return insets;
+        });
+
         binding.dealsButton.setOnClickListener(v -> {
             MainActivity.currentUser.addStamp(); // increases local stamp count
 
-            UserDao userDao = MainActivity.db.userDao();
+            UserDao userDao = db.userDao();
             userDao.updateStamps(
                     MainActivity.currentUser.getUsername(),
                     MainActivity.currentUser.getStamps()
@@ -60,11 +75,6 @@ public class SecondFragment extends Fragment {
                     .navigate(R.id.action_SecondFragment_to_FifthFragment);
         });
 
-        if (MainActivity.currentUser != null) {
-            String name = MainActivity.currentUser.getUsername();
-            binding.welcomeText.setText("Welcome back, " + name + "!");
-        }
-
         ImageView[] stampViews = {
                 binding.stamp1,
                 binding.stamp2,
@@ -73,11 +83,23 @@ public class SecondFragment extends Fragment {
                 binding.stamp5
         };
 
-        int stamps = MainActivity.currentUser.getStamps();
+        //int stamps = MainActivity.currentUser.getStamps();
+        int stamps = 4;
 
         if (stamps < 5) {
-            binding.stampLayout.setVisibility(View.VISIBLE);
+            binding.stampContainer.setVisibility(View.VISIBLE);
             binding.voucherImage.setVisibility(View.GONE);
+
+            binding.mainLayout.setPadding(binding.mainLayout.getPaddingLeft(),
+                    50, // Top padding
+                    binding.mainLayout.getPaddingRight(),
+                    binding.mainLayout.getPaddingBottom());
+
+            // Get the current layout parameters for the mainLayout (assuming it's a ViewGroup)
+            ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) binding.welcome.getLayoutParams();
+            layoutParams.bottomMargin = 50; // For top margin
+            binding.welcome.setLayoutParams(layoutParams);
+
 
             Random random = new Random();
             for (int i = 0; i < stampViews.length; i++) {
@@ -95,8 +117,16 @@ public class SecondFragment extends Fragment {
             }
         } else {
             // User has 5 or more stamps, show voucher
-            binding.stampLayout.setVisibility(View.GONE);
+            binding.stampContainer.setVisibility(View.GONE);
             binding.voucherImage.setVisibility(View.VISIBLE);
+            binding.mainLayout.setPadding(binding.mainLayout.getPaddingLeft(),
+                    80, // Top padding
+                    binding.mainLayout.getPaddingRight(),
+                    binding.mainLayout.getPaddingBottom());
+
+            ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) binding.welcome.getLayoutParams();
+            layoutParams.bottomMargin = 24; // For top margin
+            binding.welcome.setLayoutParams(layoutParams);
         }
 
     }

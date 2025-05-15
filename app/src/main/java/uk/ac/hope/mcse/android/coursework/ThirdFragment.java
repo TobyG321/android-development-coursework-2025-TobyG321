@@ -3,13 +3,17 @@ package uk.ac.hope.mcse.android.coursework;
 import static uk.ac.hope.mcse.android.coursework.MainActivity.db;
 
 import android.app.AlertDialog;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -24,19 +28,19 @@ import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import uk.ac.hope.mcse.android.coursework.databinding.FragmentThirdBinding;
+import uk.ac.hope.mcse.android.coursework.model.BasketItem;
 import uk.ac.hope.mcse.android.coursework.model.MenuItems;
 
 public class ThirdFragment extends Fragment {
 
     private FragmentThirdBinding binding;
+    private int currentRegionIndex = 0;
 
     @Override
-    public View onCreateView(
-            @NonNull LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState
-    ) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentThirdBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
@@ -57,20 +61,25 @@ public class ThirdFragment extends Fragment {
         List<MenuItems> europe = new ArrayList<>();
 
         for (MenuItems item : MainActivity.menuItems) {
-            if (item.region.equals("USA")) {
-                usa.add(item);
-            } else if (item.region.equals("South")) {
-                south.add(item);
-            } else if (item.region.equals("Europe")) {
-                europe.add(item);
+            switch (item.region) {
+                case "USA": usa.add(item); break;
+                case "South": south.add(item); break;
+                case "Europe": europe.add(item); break;
             }
         }
 
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
+                int newIndex = tab.getPosition();
+                boolean goingRight = newIndex > currentRegionIndex;
+                currentRegionIndex = newIndex;
+
                 String region = tab.getText().toString();
-                populateMenu(region, view, usa, south, europe);
+                animateMenuSwap(container, () -> {
+                    populateMenu(region, view, usa, south, europe);
+                    animateMenuEntry(container, goingRight);
+                }, goingRight);
             }
 
             @Override public void onTabUnselected(TabLayout.Tab tab) {}
@@ -79,6 +88,25 @@ public class ThirdFragment extends Fragment {
 
         tabLayout.getTabAt(0).select();
         populateMenu("USA", view, usa, south, europe);
+    }
+
+    private void animateMenuSwap(View view, Runnable onComplete, boolean toLeft) {
+        int anim = toLeft ? R.anim.slide_out_left : R.anim.slide_out_right;
+        Animation slideOut = AnimationUtils.loadAnimation(getContext(), anim);
+        slideOut.setAnimationListener(new Animation.AnimationListener() {
+            @Override public void onAnimationStart(Animation animation) {}
+            @Override public void onAnimationRepeat(Animation animation) {}
+            @Override public void onAnimationEnd(Animation animation) {
+                onComplete.run();
+            }
+        });
+        view.startAnimation(slideOut);
+    }
+
+    private void animateMenuEntry(View view, boolean fromRight) {
+        int anim = fromRight ? R.anim.slide_in_right : R.anim.slide_in_left;
+        Animation slideIn = AnimationUtils.loadAnimation(getContext(), anim);
+        view.startAnimation(slideIn);
     }
 
     private void populateMenu(String region, View view, List<MenuItems> usa, List<MenuItems> south, List<MenuItems> europe) {
@@ -93,42 +121,77 @@ public class ThirdFragment extends Fragment {
         for (int i = 0; i < selectedList.size(); i++) {
             MenuItems item = selectedList.get(i);
 
-            LinearLayout itemLayout = new LinearLayout(getContext());
-            itemLayout.setOrientation(LinearLayout.VERTICAL);
-            itemLayout.setPadding(24, 24, 24, 24);
-            itemLayout.setGravity(Gravity.CENTER_HORIZONTAL);
-            itemLayout.setBackgroundResource(R.drawable.item_card_background);
+            LinearLayout card = new LinearLayout(getContext());
+            card.setOrientation(LinearLayout.VERTICAL);
+            card.setBackgroundResource(R.drawable.rounded_yellow_card);
+            card.setElevation(8f);
+            card.setPadding(0, 32, 0, 32);
+            card.setGravity(Gravity.CENTER_HORIZONTAL);
+            card.setClickable(true);
+            card.setFocusable(true);
 
-            LinearLayout.LayoutParams itemParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);
-            itemParams.setMargins(16, 16, 16, 16);
-            itemLayout.setLayoutParams(itemParams);
+            LinearLayout.LayoutParams cardParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+            cardParams.setMargins(24, 24, 24, 24);
+            card.setLayoutParams(cardParams);
 
-            TextView title = new TextView(getContext());
-            title.setText(item.item_name);
-            title.setTypeface(null, Typeface.BOLD);
-            title.setTextSize(18f);
+            TextView name = new TextView(getContext());
+            name.setText(item.item_name);
+            name.setTypeface(null, Typeface.BOLD);
+            name.setTextSize(18f);
+            name.setMaxLines(1);
+            name.setEllipsize(TextUtils.TruncateAt.END);
+            name.setTextColor(Color.parseColor("#5B3000"));
+            name.setGravity(Gravity.CENTER_HORIZONTAL);
+            card.addView(name);
 
-            TextView price = new TextView(getContext());
-            price.setText("Price: £" + item.price);
+            LinearLayout innerLayout = new LinearLayout(getContext());
+            innerLayout.setOrientation(LinearLayout.VERTICAL);
+            innerLayout.setPadding(32, 32, 32, 32);
+            innerLayout.setGravity(Gravity.CENTER_HORIZONTAL);
+            card.addView(innerLayout);
 
             ImageView image = new ImageView(getContext());
+            image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            image.setClickable(false);
+            image.setFocusable(false);
+            image.setPadding(20, 0, 20, 0);
+
             String imageName = item.item_name.toLowerCase().replace(" ", "");
-            int imageResIdInitial = getResources().getIdentifier(imageName, "drawable", getContext().getPackageName());
+            int imageResId = getResources().getIdentifier(imageName, "drawable", getContext().getPackageName());
+            image.setImageResource(imageResId != 0 ? imageResId : R.drawable.newyork);
 
-            image.setImageResource(imageResIdInitial != 0 ? imageResIdInitial : R.drawable.newyork);
-            image.setAdjustViewBounds(true);
-            image.setLayoutParams(new LinearLayout.LayoutParams(300, 300));
+            LinearLayout.LayoutParams imageParams = new LinearLayout.LayoutParams(1, 1);
+            imageParams.gravity = Gravity.CENTER_HORIZONTAL;
+            image.setLayoutParams(imageParams);
+            innerLayout.addView(image);
 
-            itemLayout.addView(title);
-            itemLayout.addView(price);
-            itemLayout.addView(image);
+            ViewTreeObserver.OnGlobalLayoutListener[] listenerHolder = new ViewTreeObserver.OnGlobalLayoutListener[1];
+            listenerHolder[0] = () -> {
+                int cardWidth = card.getWidth();
+                if (cardWidth > 0) {
+                    int imageSize = (int) (cardWidth * 0.9);
+                    LinearLayout.LayoutParams adjustedParams = new LinearLayout.LayoutParams(imageSize, imageSize);
+                    adjustedParams.gravity = Gravity.CENTER_HORIZONTAL;
+                    adjustedParams.topMargin = 16;
+                    adjustedParams.bottomMargin = 16;
+                    image.setLayoutParams(adjustedParams);
+                    card.getViewTreeObserver().removeOnGlobalLayoutListener(listenerHolder[0]);
+                }
+            };
+            card.getViewTreeObserver().addOnGlobalLayoutListener(listenerHolder[0]);
 
-            itemLayout.setOnClickListener(v -> {
+            TextView price = new TextView(getContext());
+            String formattedPrice = "£" + String.format(Locale.UK, "%.2f", item.price).replace('.', ',');
+            price.setText(formattedPrice);
+            price.setTextSize(16f);
+            price.setTextColor(Color.parseColor("#5B3000"));
+            price.setGravity(Gravity.CENTER_HORIZONTAL);
+            card.addView(price);
+
+            card.setOnClickListener(v -> {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                LayoutInflater inflater = LayoutInflater.from(getContext());
-                View dialogView = inflater.inflate(R.layout.selection_popup, null);
+                View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.selection_popup, null);
 
-                // Removed items per category
                 List<String> removedBread = new ArrayList<>();
                 List<String> removedDog = new ArrayList<>();
                 List<String> removedCheese = new ArrayList<>();
@@ -144,12 +207,8 @@ public class ThirdFragment extends Fragment {
                 FlexboxLayout gridToppings = dialogView.findViewById(R.id.grid_toppings);
 
                 nameTextView.setText(item.item_name);
-
-                int imageResId = getResources().getIdentifier(
-                        item.item_name.toLowerCase().replace(" ", ""),
-                        "drawable", getContext().getPackageName());
-
-                imageView.setImageResource(imageResId != 0 ? imageResId : R.drawable.newyork);
+                int popupImageResId = getResources().getIdentifier(imageName, "drawable", getContext().getPackageName());
+                imageView.setImageResource(popupImageResId != 0 ? popupImageResId : R.drawable.newyork);
 
                 populateGrid(gridBread, item.bread, removedBread);
                 populateGrid(gridDog, item.dog, removedDog);
@@ -171,10 +230,17 @@ public class ThirdFragment extends Fragment {
                     }
 
                     new AlertDialog.Builder(getContext())
-                            .setTitle("Confirm Selection")
+                            .setTitle("Confirm Removals")
                             .setMessage(summary.toString())
                             .setPositiveButton("CONFIRM", (d2, w2) -> {
-                                MainActivity.menuItems.add(item);
+                                BasketItem newItem = new BasketItem(item, removedBread, removedDog, removedCheese, removedSauces, removedToppings);
+                                for(BasketItem basketItem : MainActivity.basket){
+                                    if(basketItem.isEqualTo(newItem)){
+                                        basketItem.quantity++;
+                                        return;
+                                    }
+                                }
+                                MainActivity.basket.add(newItem);
                                 Toast.makeText(getContext(), item.item_name + " added to basket!", Toast.LENGTH_SHORT).show();
                             })
                             .setNegativeButton("CANCEL", null)
@@ -190,21 +256,29 @@ public class ThirdFragment extends Fragment {
                 currentRow.setOrientation(LinearLayout.HORIZONTAL);
                 currentRow.setLayoutParams(new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT));
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                ));
                 menuContainer.addView(currentRow);
             }
 
-            currentRow.addView(itemLayout);
+            currentRow.addView(card);
+
+            if (i == selectedList.size() - 1 && selectedList.size() % 2 != 0) {
+                View spacer = new View(getContext());
+                LinearLayout.LayoutParams spacerParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f);
+                spacerParams.setMargins(24, 24, 24, 24);
+                spacer.setLayoutParams(spacerParams);
+                currentRow.addView(spacer);
+            }
         }
     }
 
     private void populateGrid(FlexboxLayout gridLayout, String csvData, List<String> removedItems) {
         gridLayout.removeAllViews();
-
         if (csvData != null && !csvData.trim().isEmpty() && !csvData.trim().equals("N/A")) {
             String[] items = csvData.split(",");
             for (String entry : items) {
-                if (!entry.equals(" ")){
+                if (!entry.equals(" ")) {
                     Button button = new Button(getContext());
                     button.setText(entry.trim());
                     button.setTextSize(12);
@@ -215,7 +289,6 @@ public class ThirdFragment extends Fragment {
                     button.setOnClickListener(v -> {
                         String state = (String) button.getTag();
                         String label = button.getText().toString();
-
                         if ("enabled".equals(state)) {
                             button.setBackgroundResource(R.drawable.rounded_container_disabled);
                             button.setTag("disabled");
@@ -242,7 +315,6 @@ public class ThirdFragment extends Fragment {
             placeholder.setTextSize(12);
             placeholder.setAllCaps(true);
             placeholder.setBackgroundResource(R.drawable.rounded_container);
-
             FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT

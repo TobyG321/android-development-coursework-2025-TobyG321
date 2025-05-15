@@ -2,56 +2,61 @@
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="24dp"
-    android:background="#FFF8F4"
+    android:paddingLeft="24dp"
+    android:paddingRight="24dp"
+    android:background="#FFEB8A"
     android:fillViewport="true">
 
     <LinearLayout
+
+        android:id="@+id/main_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="top"
+        android:background="#FFEB8A"
         android:layout_gravity="top|center_horizontal">
-
-        <!-- Title -->
-        <TextView
-            android:id="@+id/deals_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Deals"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:textColor="#6A1B9A"
-            android:layout_marginBottom="16dp" />
 
         <!-- Deals Container -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:background="#FFEB8A">
+
+            <TextView
+                android:id="@+id/deals_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DEALS"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                android:textColor="#5B3000"
+                android:layout_gravity="center_horizontal"
+                android:paddingBottom="16dp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp"
-                android:background="#FFF8F4">
+                android:background="#FFEB8A">
 
                 <!-- Dog of the day -->
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
-                    android:background="@drawable/rounded_container"
+
                     android:padding="1dp">
 
                     <!-- Background: Dog of the Day Poster -->
-                    <ImageView
-                        android:id="@+id/background_image"
+                    <ImageButton
+                        android:id="@+id/dog_of_the_day"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:adjustViewBounds="true"
                         android:scaleType="fitCenter"
+                        android:padding="0dp"
                         android:src="@drawable/dog_of_the_day"
                         android:contentDescription="Dog of the Day Poster" />
 
@@ -84,16 +89,17 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginEnd="8dp"
-                        android:background="@drawable/rounded_container">
+                        >
 
-                        <ImageView
+                        <ImageButton
+                            android:id="@+id/roulette"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:adjustViewBounds="true"
                             android:scaleType="fitCenter"
                             android:src="@drawable/roulette"
                             android:contentDescription="Roulette"
-                            android:padding="1dp"/>
+                            android:padding="0dp"/>
                     </FrameLayout>
 
                     <!-- Spicy Roulette Image -->
@@ -102,16 +108,17 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="8dp"
-                        android:background="@drawable/rounded_container">
+                        >
 
-                        <ImageView
+                        <ImageButton
+                            android:id="@+id/spicy_roulette"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:adjustViewBounds="true"
                             android:scaleType="fitCenter"
                             android:src="@drawable/spicy_roulette"
                             android:contentDescription="Spicy Roulette"
-                            android:padding="1dp"/>
+                            android:padding="0dp"/>
                     </FrameLayout>
                 </LinearLayout>
 
@@ -121,14 +128,16 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
                     android:orientation="vertical"
-                    android:background="@drawable/rounded_container">
+                    >
 
-                    <ImageView
+                    <ImageButton
+                        android:id="@+id/meal_deal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:adjustViewBounds="true"
                         android:scaleType="fitCenter"
                         android:src="@drawable/meal_deal"
+                        android:padding="0dp"
                         android:contentDescription="Meal Deal Image" />
                 </LinearLayout>
 
@@ -138,16 +147,17 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
                     android:orientation="vertical"
-                    android:background="@drawable/rounded_container">
+                    >
 
-                    <ImageView
+                    <ImageButton
+                        android:id="@+id/meal_for_two"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:adjustViewBounds="true"
                         android:scaleType="fitCenter"
                         android:src="@drawable/meal_for_two"
                         android:contentDescription="Meal Deal Image"
-                        android:padding="1dp"/>
+                        android:padding="0dp"/>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

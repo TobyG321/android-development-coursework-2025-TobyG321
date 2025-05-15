@@ -3,7 +3,8 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:fillViewport="true"
-    android:padding="16dp"
+    android:paddingTop="16dp"
+    android:paddingHorizontal="16dp"
     android:maxHeight="300dp" >
 
     <LinearLayout
@@ -36,6 +37,13 @@
             android:layout_marginBottom="16dp" />
 
         <!-- Section Builder -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tap_to_remove"
+            android:textStyle="italic"
+            android:textColor="#AAAAAA"
+            android:textSize="12sp" />
         <!-- Bread -->
         <TextView style="@style/CategoryHeader"
             android:text="Bread"

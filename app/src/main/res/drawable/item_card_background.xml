@@ -1,17 +1,25 @@
-<?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="rectangle">
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Solid color with border and rounded corners -->
+    <item android:right="2dp" android:left="2dp" android:top="2dp" android:bottom="2dp">
+        <shape xmlns:android="http://schemas.android.com/apk/res/android">
+            <!-- Background color -->
+            <solid android:color="@android:color/transparent" />
 
-    <!-- Background color -->
-    <solid android:color="#FDF6F2" />
+            <!-- Border color -->
+            <stroke
+                android:width="2dp"
+                android:color="#C87716" />
 
-    <!-- Border color -->
-    <stroke
-        android:width="2dp"
-        android:color="#C87716" />
+            <!-- Rounded corners -->
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
 
-    <!-- Rounded corners -->
-    <corners android:radius="16dp" />
-
-    <!-- Optional: shadow/elevation if used in MaterialCardView instead -->
-</shape>
+    <!-- Background image -->
+    <item>
+        <bitmap
+            android:src="@drawable/item_background"
+            android:gravity="fill"
+            android:tileMode="disabled"/>
+    </item>
+</layer-list>

@@ -8,4 +8,8 @@
     <string name="forth_fragment_label">Rewards</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
+    <string name="welcome_text">welcome text</string>
+    <string name="rewards">Rewards</string>
+    <string name="Checkout" />
+    <string name="tap_to_remove">tap to remove</string>
 </resources>

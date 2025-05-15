@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="12dp"
+    android:layout_marginVertical="6dp"
+    android:layout_marginHorizontal="4dp"
+    android:gravity="center_vertical"
+    android:background="@drawable/rounded_yellow_card"
+    android:elevation="3dp">
+
+    <!-- Hot Dog Image -->
+    <ImageView
+        android:id="@+id/item_image"
+        android:layout_width="88dp"
+        android:layout_height="88dp"
+        android:src="@drawable/newyork"
+        android:background="@drawable/rounded_orange_card"
+        android:scaleType="fitCenter"
+        android:layout_marginEnd="12dp" />
+
+    <!-- Name, Customizations, Quantity -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/item_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hot Dog"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#5B3000" />
+
+        <TextView
+            android:id="@+id/item_customizations"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No Ketchup, No Cheese"
+            android:textSize="14sp"
+            android:textColor="#5B3000" />
+
+        <!-- Quantity Control -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="8dp">
+
+            <Button
+                android:id="@+id/button_decrease"
+                android:layout_width="30dp"
+                android:layout_height="40dp"
+                android:backgroundTint="#EF6C00"
+                android:elevation="2dp"
+                android:fontFamily="sans-serif-medium"
+                android:padding="0dp"
+                android:text="−"
+                android:textColor="#FFFFFF"
+                android:textSize="22sp" />
+
+            <TextView
+                android:id="@+id/text_quantity"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="1"
+                android:textSize="18sp"
+                android:gravity="center"
+                android:textColor="#5B3000"
+                android:fontFamily="sans-serif-medium" />
+
+            <Button
+                android:id="@+id/button_increase"
+                android:layout_width="30dp"
+                android:layout_height="40dp"
+                android:text="+"
+                android:textSize="22sp"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#EF6C00"
+                android:padding="0dp"
+                android:elevation="2dp"
+                android:fontFamily="sans-serif-medium" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+    <!-- Price and Delete -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="8dp">
+
+        <TextView
+            android:id="@+id/item_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$10.00"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="#5B3000"
+            android:layout_gravity="end" />
+
+        <ImageButton
+            android:id="@+id/button_delete"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:src="@drawable/bin_closed"
+            android:background="@android:color/transparent"
+            android:contentDescription="Delete item"
+            android:scaleType="fitCenter"
+            android:layout_gravity="end"/>
+    </LinearLayout>
+</LinearLayout>

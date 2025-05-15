@@ -62,7 +62,23 @@
         tools:layout="@layout/fragment_fifth">
     </fragment>
 
+    <fragment
+        android:id="@+id/SixthFragment"
+        android:name="uk.ac.hope.mcse.android.coursework.SixthFragment"
+        android:label="Checkout"
+        tools:layout="@layout/fragment_sixth">
+    </fragment>
+
     <action
         android:id="@+id/action_logout"
         app:destination="@id/FirstFragment" />
+
+    <action
+        android:id="@+id/action_checkout"
+        app:destination="@id/SixthFragment" />
+
+    <action
+        android:id="@+id/action_menu"
+        app:destination="@+id/ThirdFragment" />
+
 </navigation>

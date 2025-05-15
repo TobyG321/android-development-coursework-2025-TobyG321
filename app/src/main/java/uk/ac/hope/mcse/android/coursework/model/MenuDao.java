@@ -16,4 +16,7 @@ public interface MenuDao {
 
     @Query("DELETE FROM MenuItems WHERE item_name = :itemName")
     void deleteItem(String itemName);
+
+    @Query("SELECT * FROM MenuItems ORDER BY RANDOM() LIMIT 1")
+    MenuItems getRandomDog();
 }

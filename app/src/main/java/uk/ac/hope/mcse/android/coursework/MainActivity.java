@@ -24,10 +24,12 @@ import com.google.android.material.snackbar.Snackbar;
 
 import uk.ac.hope.mcse.android.coursework.databinding.ActivityMainBinding;
 import uk.ac.hope.mcse.android.coursework.model.AppDatabase;
+import uk.ac.hope.mcse.android.coursework.model.BasketItem;
 import uk.ac.hope.mcse.android.coursework.model.MenuDao;
 import uk.ac.hope.mcse.android.coursework.model.MenuItems;
 import uk.ac.hope.mcse.android.coursework.model.User;
 import uk.ac.hope.mcse.android.coursework.model.UserDao;
+import uk.ac.hope.mcse.android.coursework.model.deals.Deal;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -44,7 +46,9 @@ public class MainActivity extends AppCompatActivity {
 
     public static User currentUser;
     public static List<MenuItems> menuItems = new ArrayList<>();
-    public static List<MenuItems> basket = new ArrayList<>();
+    public static List<BasketItem> basket = new ArrayList<>();
+
+    public static List<Deal> deals = new ArrayList<>();
     public static List<String> rewards = new ArrayList<>();
     public static AppDatabase db;
 
@@ -79,21 +83,38 @@ public class MainActivity extends AppCompatActivity {
                     public void onDestinationChanged(@NonNull NavController controller,
                                                      @NonNull NavDestination destination,
                                                      @Nullable Bundle arguments) {
-                        if (destination.getId() == R.id.FirstFragment) {
+                        if (destination.getId() == R.id.FirstFragment || destination.getId() == R.id.SixthFragment) {
                             binding.fab.hide();
+                            binding.toolbar.setVisibility(View.GONE);
                         } else {
                             binding.fab.show();
-                            if(destination.getId() == R.id.SecondFragment) {
-                                binding.fab.setImageResource(R.drawable.hotdog_fab);
-                                binding.fab.setOnClickListener(v -> {
-                                    navController.navigate(R.id.action_SecondFragment_to_ThirdFragment);
-                                });
-                            } else if (destination.getId() == R.id.ThirdFragment) {
+                            binding.toolbar.setVisibility(View.GONE);
+                            if(!basket.isEmpty()) {
                                 binding.fab.setImageResource(R.drawable.cart_fab);
-                            } else if (destination.getId() == R.id.ForthFragment) {
                                 binding.fab.setOnClickListener(v -> {
-                                    navController.navigate(R.id.action_ForthFragment_to_ThirdFragment);
+                                    Log.d("FAB_CLICK", "FAB clicked");
+                                    for (BasketItem item : basket) {
+                                        Log.d("FAB_CLICK", "Item: " + item.baseItem.item_name);
+                                    }
+                                    navController.navigate(R.id.action_checkout);
                                 });
+                            }
+                            else {
+                                if (destination.getId() == R.id.SecondFragment) {
+                                    binding.fab.setImageResource(R.drawable.hotdog_fab);
+                                    binding.fab.setOnClickListener(v -> {
+                                        navController.navigate(R.id.action_SecondFragment_to_ThirdFragment);
+                                    });
+                                } else if (destination.getId() == R.id.ThirdFragment) {
+                                    binding.fab.setImageResource(R.drawable.cart_fab);
+                                    binding.fab.setOnClickListener(v -> {
+                                        navController.navigate(R.id.action_checkout);
+                                    });
+                                } else if (destination.getId() == R.id.ForthFragment || destination.getId() == R.id.FifthFragment) {
+                                    binding.fab.setOnClickListener(v -> {
+                                        navController.navigate(R.id.action_menu);
+                                    });
+                                }
                             }
                         }
                     }

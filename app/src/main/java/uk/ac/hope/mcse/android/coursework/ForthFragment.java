@@ -7,16 +7,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
-
-import java.util.Random;
 
 import uk.ac.hope.mcse.android.coursework.databinding.FragmentForthBinding;
-import uk.ac.hope.mcse.android.coursework.databinding.FragmentSecondBinding;
 import uk.ac.hope.mcse.android.coursework.model.UserDao;
 
 public class ForthFragment extends Fragment {
@@ -28,16 +23,15 @@ public class ForthFragment extends Fragment {
             @NonNull LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
-
         binding = FragmentForthBinding.inflate(inflater, container, false);
         return binding.getRoot();
-
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        int userPoints = MainActivity.currentUser.getPoints(); // e.g., 1800
+        int userPoints = 6000;
+        //MainActivity.currentUser.getPoints();
 
         binding.rewardbox500.setOnClickListener(v ->
                 confirmAndRedeemReward(view, 500, "Small"));
@@ -74,23 +68,16 @@ public class ForthFragment extends Fragment {
             }
         }
 
-        // Get the full height of the bar
-        View backgroundBar = view.findViewById(R.id.background_bar);
+        View rewardContainer = binding.rewardContainer;
         View progressFill = view.findViewById(R.id.progress_fill);
 
-        backgroundBar.post(() -> {
-            int barHeight = backgroundBar.getHeight();
+        rewardContainer.post(() -> {
+            int containerHeight = rewardContainer.getHeight();
+            int fillHeight = getFillHeightFromPoints(userPoints, containerHeight);
 
-            // Calculate fill height
-            float fillPercent = Math.min(userPoints / (float) 5000, 1.0f);
-            int targetHeight = (int) (barHeight * fillPercent);
-
-            // Get current height of the fill view
-            int currentHeight = progressFill.getHeight();
-
-            // Animate the height change
-            ValueAnimator animator = ValueAnimator.ofInt(currentHeight, targetHeight);
-            animator.setDuration(500); // Duration in milliseconds
+            // Animate fill bar height
+            ValueAnimator animator = ValueAnimator.ofInt(progressFill.getHeight(), fillHeight);
+            animator.setDuration(500);
             animator.addUpdateListener(animation -> {
                 int animatedHeight = (int) animation.getAnimatedValue();
                 ViewGroup.LayoutParams params = progressFill.getLayoutParams();
@@ -99,8 +86,35 @@ public class ForthFragment extends Fragment {
             });
             animator.start();
         });
-
     }
+
+    /**
+     * Converts user's point progress into vertical height based on 2:4:8:10 visual weights.
+     */
+    private int getFillHeightFromPoints(int points, int containerHeight) {
+        int[] thresholds = {0, 500, 1500, 3000, 5000};
+        int[] cumulativeWeights = {0, 2, 6, 14, 24}; // 2+4+8+10
+
+        float visualWeight = 0f;
+
+        for (int i = 1; i < thresholds.length; i++) {
+            if (points <= thresholds[i]) {
+                float range = thresholds[i] - thresholds[i - 1];
+                float progress = points - thresholds[i - 1];
+                float segmentWeight = cumulativeWeights[i] - cumulativeWeights[i - 1];
+                visualWeight = cumulativeWeights[i - 1] + (progress / range) * segmentWeight;
+                break;
+            }
+        }
+
+        // Handle cases where points exceed max threshold
+        if (points > 5000) {
+            visualWeight = 24f; // Max visual fill
+        }
+
+        return (int) ((visualWeight / 24f) * containerHeight);
+    }
+
 
     private void confirmAndRedeemReward(View view, int cost, String rewardLabel) {
         new androidx.appcompat.app.AlertDialog.Builder(requireContext())
@@ -126,5 +140,4 @@ public class ForthFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
-
 }
