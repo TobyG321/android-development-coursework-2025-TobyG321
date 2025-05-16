@@ -13,6 +13,7 @@ navigationUi = "2.6.0"
 roomRuntime = "2.7.0"
 navigationFragmentVersion = "2.8.9"
 flexbox = "3.0.0"
+volley = "1.2.1"
 
 [libraries]
 gridlayout = { module = "androidx.gridlayout:gridlayout", version.ref = "gridlayout" }
@@ -29,6 +30,7 @@ room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRun
 room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 androidx-navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragmentVersion" }
 flexbox = { group = "com.google.android.flexbox", name = "flexbox", version.ref = "flexbox" }
+volley = { module = "com.android.volley:volley", version.ref = "volley" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -1,8 +1,12 @@
 package uk.ac.hope.mcse.android.coursework.model;
 
+import android.location.Address;
+
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.ColumnInfo;
+
+import java.util.List;
 
 @Entity
 public class User {
@@ -21,6 +25,15 @@ public class User {
 
     @ColumnInfo(name = "points")
     public int points = 0;
+
+    @ColumnInfo(name = "mobile")
+    public String mobile;
+
+    @ColumnInfo(name = "email")
+    public String email;
+
+    @ColumnInfo(name = "address")
+    public String address;
 
     public void setUsername(String name){
         username = name;
