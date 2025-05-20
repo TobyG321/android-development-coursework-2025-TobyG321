@@ -1,165 +1,173 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="24dp"
-    android:paddingRight="24dp"
     android:background="#FFEB8A"
-    android:fillViewport="true">
+    android:paddingHorizontal="24dp"
+    android:fillViewport="true"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    >
 
     <LinearLayout
-
         android:id="@+id/main_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="top"
         android:background="#FFEB8A"
-        android:layout_gravity="top|center_horizontal">
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        >
 
-        <!-- Deals Container -->
+        <!-- Title -->
+        <TextView
+            android:id="@+id/deals_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DEALS"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textColor="#5B3000"
+            android:layout_gravity="center_horizontal"
+            android:paddingBottom="16dp" />
+
+        <!-- Dog of the Day with overlay image -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="@android:color/transparent">
+
+                <ImageButton
+                    android:id="@+id/dog_of_the_day"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitXY"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/dog_of_the_day"
+                    android:contentDescription="Dog of the Day Poster" />
+            </androidx.cardview.widget.CardView>
+
+            <!-- Overlay hotdog image -->
+            <ImageView
+                android:id="@+id/featured_dog"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|bottom"
+                android:layout_marginBottom="30dp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:elevation="10dp"
+                android:contentDescription="Featured Hotdog"
+                android:src="@drawable/coney" />
+        </FrameLayout>
+
+        <!-- Roulette Row -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="#FFEB8A">
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:weightSum="2"
+            android:layout_marginBottom="24dp"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            >
 
-            <TextView
-                android:id="@+id/deals_title"
-                android:layout_width="wrap_content"
+            <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="DEALS"
-                android:textSize="32sp"
-                android:textStyle="bold"
-                android:textColor="#5B3000"
-                android:layout_gravity="center_horizontal"
-                android:paddingBottom="16dp"/>
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="@android:color/transparent">
 
-            <LinearLayout
+                <ImageButton
+                    android:id="@+id/roulette"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitXY"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/roulette"
+                    android:contentDescription="Roulette" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp"
+                app:cardBackgroundColor="@android:color/transparent">
+
+                <ImageButton
+                    android:id="@+id/spicy_roulette"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitXY"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/spicy_roulette"
+                    android:contentDescription="Spicy Roulette" />
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
+
+        <!-- Meal Deal -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp"
+            app:cardBackgroundColor="@android:color/transparent"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            >
+
+            <ImageButton
+                android:id="@+id/meal_deal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="#FFEB8A">
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY"
+                android:background="@android:color/transparent"
+                android:src="@drawable/meal_deal"
+                android:contentDescription="Meal Deal" />
+        </androidx.cardview.widget.CardView>
 
-                <!-- Dog of the day -->
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
+        <!-- 👫 Meal for Two -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:orientation="vertical"
+            android:clipToPadding="false"
+            android:clipChildren="false"
+            >
 
-                    android:padding="1dp">
-
-                    <!-- Background: Dog of the Day Poster -->
-                    <ImageButton
-                        android:id="@+id/dog_of_the_day"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:adjustViewBounds="true"
-                        android:scaleType="fitCenter"
-                        android:padding="0dp"
-                        android:src="@drawable/dog_of_the_day"
-                        android:contentDescription="Dog of the Day Poster" />
-
-                    <!-- Overlay: Hotdog on the Podium -->
-                    <ImageView
-                        android:id="@+id/featured_dog"
-                        android:layout_width="200dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal|bottom"
-                        android:layout_marginBottom="30dp"
-                        android:adjustViewBounds="true"
-                        android:contentDescription="Featured Hotdog"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/coney" />
-                </FrameLayout>
-
-                <!-- 🎡 Roulette & 🌶️ Spicy Roulette side-by-side -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="16dp"
-                    android:gravity="center_horizontal"
-                    android:weightSum="2">
-
-                    <!-- Roulette Image -->
-                    <!-- Roulette Image -->
-                    <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="8dp"
-                        >
-
-                        <ImageButton
-                            android:id="@+id/roulette"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:adjustViewBounds="true"
-                            android:scaleType="fitCenter"
-                            android:src="@drawable/roulette"
-                            android:contentDescription="Roulette"
-                            android:padding="0dp"/>
-                    </FrameLayout>
-
-                    <!-- Spicy Roulette Image -->
-                    <FrameLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="8dp"
-                        >
-
-                        <ImageButton
-                            android:id="@+id/spicy_roulette"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:adjustViewBounds="true"
-                            android:scaleType="fitCenter"
-                            android:src="@drawable/spicy_roulette"
-                            android:contentDescription="Spicy Roulette"
-                            android:padding="0dp"/>
-                    </FrameLayout>
-                </LinearLayout>
-
-                <!-- 🍽️ Meal Deal -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:orientation="vertical"
-                    >
-
-                    <ImageButton
-                        android:id="@+id/meal_deal"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:adjustViewBounds="true"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/meal_deal"
-                        android:padding="0dp"
-                        android:contentDescription="Meal Deal Image" />
-                </LinearLayout>
-
-                <!-- 👫 Meal for Two -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:orientation="vertical"
-                    >
-
-                    <ImageButton
-                        android:id="@+id/meal_for_two"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:adjustViewBounds="true"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/meal_for_two"
-                        android:contentDescription="Meal Deal Image"
-                        android:padding="0dp"/>
-                </LinearLayout>
-            </LinearLayout>
+            <ImageButton
+                android:id="@+id/meal_for_two"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:elevation="8dp"
+                android:src="@drawable/meal_for_two"
+                android:contentDescription="Meal Deal Image"
+                android:padding="0dp"/>
         </LinearLayout>
+
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

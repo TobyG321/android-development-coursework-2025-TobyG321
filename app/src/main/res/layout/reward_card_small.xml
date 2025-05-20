@@ -1,0 +1,42 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/rounded_yellow_card"
+    android:elevation="4dp"
+    android:gravity="center_horizontal"
+    android:clickable="true"
+    android:focusable="true"
+    android:layout_marginRight="15dp"
+    android:layout_marginBottom="10dp"
+    android:padding="5dp"
+    >
+
+    <TextView
+        android:id="@+id/reward_title_small"
+        android:text="Fries"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:maxLines="1"
+        android:textColor="#5B3000"
+        android:gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/reward_image_small"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/fries"
+        android:contentDescription="Reward image" />
+
+    <TextView
+        android:id="@+id/reward_points"
+        android:text="3000"
+        android:textSize="12sp"
+        android:textColor="@color/black"
+        android:gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+</LinearLayout>

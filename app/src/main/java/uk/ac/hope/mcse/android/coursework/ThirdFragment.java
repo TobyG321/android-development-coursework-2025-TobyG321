@@ -7,8 +7,10 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -22,6 +24,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.flexbox.FlexboxLayout;
 import com.google.android.material.tabs.TabLayout;
@@ -33,10 +36,16 @@ import java.util.Locale;
 import uk.ac.hope.mcse.android.coursework.databinding.FragmentThirdBinding;
 import uk.ac.hope.mcse.android.coursework.model.BasketItem;
 import uk.ac.hope.mcse.android.coursework.model.MenuItems;
+import uk.ac.hope.mcse.android.coursework.model.deals.MealForOne;
+import uk.ac.hope.mcse.android.coursework.model.rewards.MealUpgrade;
+import uk.ac.hope.mcse.android.coursework.model.rewards.Reward;
 
 public class ThirdFragment extends Fragment {
 
     private FragmentThirdBinding binding;
+
+    private GestureDetector gestureDetector;
+
     private int currentRegionIndex = 0;
 
     @Override
@@ -48,6 +57,13 @@ public class ThirdFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        gestureDetector = new GestureDetector(getContext(), new SwipeGestureListener());
+
+        view.setOnTouchListener((v, event) -> {
+            gestureDetector.onTouchEvent(event);
+            return true;
+        });
 
         TabLayout tabLayout = view.findViewById(R.id.region_tabs);
         LinearLayout container = view.findViewById(R.id.menu_container);
@@ -113,8 +129,29 @@ public class ThirdFragment extends Fragment {
         LinearLayout menuContainer = view.findViewById(R.id.menu_container);
         menuContainer.removeAllViews();
 
-        List<MenuItems> selectedList = region.equals("USA") ? usa
-                : region.equals("Latin America") ? south : europe;
+        List<MenuItems> selectedList;
+
+        if (region.equals("USA")) {
+            selectedList = new ArrayList<>(usa);
+
+            // Add Custom Dog
+            MenuItems customDog = new MenuItems();
+            customDog.item_name = "Custom Dog";
+            customDog.region = "USA";
+            customDog.price = 5.00;
+            customDog.bread = "";   // will be dynamically collected in popup
+            customDog.dog = "";
+            customDog.cheese = "";
+            customDog.sauces = "";
+            customDog.toppings = "";
+
+            selectedList.add(0, customDog); // Add to top of list
+        } else if (region.equals("Latin America")) {
+            selectedList = new ArrayList<>(south);
+        } else {
+            selectedList = new ArrayList<>(europe);
+        }
+
 
         LinearLayout currentRow = null;
 
@@ -181,7 +218,7 @@ public class ThirdFragment extends Fragment {
             card.getViewTreeObserver().addOnGlobalLayoutListener(listenerHolder[0]);
 
             TextView price = new TextView(getContext());
-            String formattedPrice = "£" + String.format(Locale.UK, "%.2f", item.price).replace('.', ',');
+            String formattedPrice = "£" + String.format(Locale.UK, "%.2f", item.price);
             price.setText(formattedPrice);
             price.setTextSize(16f);
             price.setTextColor(Color.parseColor("#5B3000"));
@@ -189,66 +226,89 @@ public class ThirdFragment extends Fragment {
             card.addView(price);
 
             card.setOnClickListener(v -> {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.selection_popup, null);
+                if (item.item_name.equals("Custom Dog")) {
+                    showCustomDogPopup();
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.selection_popup, null);
 
-                List<String> removedBread = new ArrayList<>();
-                List<String> removedDog = new ArrayList<>();
-                List<String> removedCheese = new ArrayList<>();
-                List<String> removedSauces = new ArrayList<>();
-                List<String> removedToppings = new ArrayList<>();
+                    List<String> removedBread = new ArrayList<>();
+                    List<String> removedDog = new ArrayList<>();
+                    List<String> removedCheese = new ArrayList<>();
+                    List<String> removedSauces = new ArrayList<>();
+                    List<String> removedToppings = new ArrayList<>();
 
-                TextView nameTextView = dialogView.findViewById(R.id.hotdog_name);
-                ImageView imageView = dialogView.findViewById(R.id.hotdog_image);
-                FlexboxLayout gridBread = dialogView.findViewById(R.id.grid_bread);
-                FlexboxLayout gridDog = dialogView.findViewById(R.id.grid_dog);
-                FlexboxLayout gridCheese = dialogView.findViewById(R.id.grid_cheese);
-                FlexboxLayout gridSauces = dialogView.findViewById(R.id.grid_sauces);
-                FlexboxLayout gridToppings = dialogView.findViewById(R.id.grid_toppings);
+                    TextView nameTextView = dialogView.findViewById(R.id.hotdog_name);
+                    ImageView imageView = dialogView.findViewById(R.id.hotdog_image);
+                    FlexboxLayout gridBread = dialogView.findViewById(R.id.grid_bread);
+                    FlexboxLayout gridDog = dialogView.findViewById(R.id.grid_dog);
+                    FlexboxLayout gridCheese = dialogView.findViewById(R.id.grid_cheese);
+                    FlexboxLayout gridSauces = dialogView.findViewById(R.id.grid_sauces);
+                    FlexboxLayout gridToppings = dialogView.findViewById(R.id.grid_toppings);
 
-                nameTextView.setText(item.item_name);
-                int popupImageResId = getResources().getIdentifier(imageName, "drawable", getContext().getPackageName());
-                imageView.setImageResource(popupImageResId != 0 ? popupImageResId : R.drawable.newyork);
+                    nameTextView.setText(item.item_name);
+                    int popupImageResId = getResources().getIdentifier(imageName, "drawable", getContext().getPackageName());
+                    imageView.setImageResource(popupImageResId != 0 ? popupImageResId : R.drawable.newyork);
 
-                populateGrid(gridBread, item.bread, removedBread);
-                populateGrid(gridDog, item.dog, removedDog);
-                populateGrid(gridCheese, item.cheese, removedCheese);
-                populateGrid(gridSauces, item.sauces, removedSauces);
-                populateGrid(gridToppings, item.toppings, removedToppings);
+                    populateGrid(gridBread, item.bread, removedBread, true, false);     // only 1 bread allowed
+                    populateGrid(gridDog, item.dog, removedDog, true, false);           // only 1 dog allowed
+                    populateGrid(gridCheese, item.cheese, removedCheese, false, false); // multi-select
+                    populateGrid(gridSauces, item.sauces, removedSauces, false, false); // multi-select
+                    populateGrid(gridToppings, item.toppings, removedToppings, false, false); // multi-select
 
-                builder.setView(dialogView);
-                builder.setPositiveButton("ADD TO BASKET", (dialog, which) -> {
-                    StringBuilder summary = new StringBuilder("You removed:\n\n");
-                    if (!removedBread.isEmpty()) summary.append("Bread: ").append(removedBread).append("\n");
-                    if (!removedDog.isEmpty()) summary.append("Dog: ").append(removedDog).append("\n");
-                    if (!removedCheese.isEmpty()) summary.append("Cheese: ").append(removedCheese).append("\n");
-                    if (!removedSauces.isEmpty()) summary.append("Sauces: ").append(removedSauces).append("\n");
-                    if (!removedToppings.isEmpty()) summary.append("Toppings: ").append(removedToppings).append("\n");
+                    builder.setView(dialogView);
+                    builder.setPositiveButton("ADD TO BASKET", (dialog, which) -> {
+                        StringBuilder summary = new StringBuilder("You removed:\n\n");
+                        if (!removedBread.isEmpty()) summary.append("Bread: ").append(removedBread).append("\n");
+                        if (!removedDog.isEmpty()) summary.append("Dog: ").append(removedDog).append("\n");
+                        if (!removedCheese.isEmpty()) summary.append("Cheese: ").append(removedCheese).append("\n");
+                        if (!removedSauces.isEmpty()) summary.append("Sauces: ").append(removedSauces).append("\n");
+                        if (!removedToppings.isEmpty()) summary.append("Toppings: ").append(removedToppings).append("\n");
 
-                    if (summary.toString().equals("You removed:\n\n")) {
-                        summary = new StringBuilder("No customisations made. Add to basket?");
-                    }
+                        if (summary.toString().equals("You removed:\n\n")) {
+                            summary = new StringBuilder("No customisations made. Add to basket?");
+                        }
 
-                    new AlertDialog.Builder(getContext())
-                            .setTitle("Confirm Removals")
-                            .setMessage(summary.toString())
-                            .setPositiveButton("CONFIRM", (d2, w2) -> {
-                                BasketItem newItem = new BasketItem(item, removedBread, removedDog, removedCheese, removedSauces, removedToppings);
-                                for(BasketItem basketItem : MainActivity.basket){
-                                    if(basketItem.isEqualTo(newItem)){
-                                        basketItem.quantity++;
-                                        return;
+                        new AlertDialog.Builder(getContext())
+                                .setTitle("Confirm Removals")
+                                .setMessage(summary.toString())
+                                .setPositiveButton("CONFIRM", (d2, w2) -> {
+                                    BasketItem newItem = new BasketItem(item, removedBread, removedDog, removedCheese, removedSauces, removedToppings);
+
+                                    // Check if there's a pending MealUpgrade reward
+                                    for (Reward reward : MainActivity.rewards) {
+                                        if (reward instanceof MealUpgrade) {
+                                            MealUpgrade upgrade = (MealUpgrade) reward;
+
+                                            // Only set dog if it hasn't been set yet
+                                            if (upgrade.meal != null && upgrade.meal.dog == null) {
+                                                upgrade.meal.dog = newItem;
+                                                upgrade.meal.deal_price = newItem.price;
+                                                Toast.makeText(getContext(), "Dog added to Meal Upgrade!", Toast.LENGTH_SHORT).show();
+                                                return;
+                                            }
+                                        }
                                     }
-                                }
-                                MainActivity.basket.add(newItem);
-                                Toast.makeText(getContext(), item.item_name + " added to basket!", Toast.LENGTH_SHORT).show();
-                            })
-                            .setNegativeButton("CANCEL", null)
-                            .show();
-                });
 
-                builder.setNegativeButton("CANCEL", null);
-                builder.show();
+                                    // Otherwise, proceed with normal basket logic
+                                    for (BasketItem basketItem : MainActivity.basket) {
+                                        if (basketItem.isEqualTo(newItem)) {
+                                            basketItem.quantity++;
+                                            return;
+                                        }
+                                    }
+
+                                    MainActivity.basket.add(newItem);
+                                    Toast.makeText(getContext(), item.item_name + " added to basket!", Toast.LENGTH_SHORT).show();
+                                })
+
+                                .setNegativeButton("CANCEL", null)
+                                .show();
+                    });
+
+                    builder.setNegativeButton("CANCEL", null);
+                    builder.show();
+                }
             });
 
             if (i % 2 == 0) {
@@ -273,22 +333,66 @@ public class ThirdFragment extends Fragment {
         }
     }
 
-    private void populateGrid(FlexboxLayout gridLayout, String csvData, List<String> removedItems) {
+    private void populateGrid(FlexboxLayout gridLayout, String csvData, List<String> removedItems, boolean singleSelect, boolean showExtras) {
         gridLayout.removeAllViews();
-        if (csvData != null && !csvData.trim().isEmpty() && !csvData.trim().equals("N/A")) {
-            String[] items = csvData.split(",");
-            for (String entry : items) {
-                if (!entry.equals(" ")) {
-                    Button button = new Button(getContext());
-                    button.setText(entry.trim());
-                    button.setTextSize(12);
-                    button.setAllCaps(true);
-                    button.setBackgroundResource(R.drawable.rounded_container);
-                    button.setTag("enabled");
+        if (csvData == null || csvData.trim().isEmpty() || csvData.trim().equals("N/A")) return;
 
-                    button.setOnClickListener(v -> {
+        String[] items = csvData.split(",");
+
+        for (String entry : items) {
+            if (!entry.trim().isEmpty()) {
+                String label = entry.trim();
+                String displayLabel = label;
+                String lower = label.toLowerCase(Locale.ROOT);
+
+                // Apply price suffixes for Custom Dog extras
+                if (showExtras) {
+                    if (lower.contains("ft frank") || lower.contains("bratwurst")) {
+                        displayLabel += " (+£0.50)";
+                    } else if (lower.contains("short")) {
+                        displayLabel += " (-£1.00)";
+                    } else if (lower.contains("chorizo")) {
+                        displayLabel += " (+£1.00)";
+                    } else if (lower.contains("chili")) {
+                        displayLabel += " (+£0.50)";
+                    } else if (lower.contains("avocado") || lower.contains("guac")) {
+                        displayLabel += " (+£1.00)";
+                    } else if (lower.contains("shrimp salad")) {
+                        displayLabel += " (+£0.50)";
+                    } else if (gridLayout.getId() == R.id.grid_cheese) {
+                        displayLabel += " (+£0.50)";
+                    }
+                }
+
+                Button button = new Button(getContext());
+                button.setText(displayLabel);
+                button.setTextSize(12);
+                button.setAllCaps(true);
+
+                boolean enabled = !removedItems.contains(label);
+                button.setBackgroundResource(enabled ? R.drawable.rounded_container : R.drawable.rounded_container_disabled);
+                button.setTag(enabled ? "enabled" : "disabled");
+
+                button.setOnClickListener(v -> {
+                    if (singleSelect) {
+                        // Deselect all other buttons
+                        for (int i = 0; i < gridLayout.getChildCount(); i++) {
+                            View child = gridLayout.getChildAt(i);
+                            if (child instanceof Button) {
+                                Button b = (Button) child;
+                                b.setBackgroundResource(R.drawable.rounded_container_disabled);
+                                b.setTag("disabled");
+                                if (!removedItems.contains(b.getText().toString().replaceAll(" \\(.*\\)$", ""))) {
+                                    removedItems.add(b.getText().toString().replaceAll(" \\(.*\\)$", ""));
+                                }
+                            }
+                        }
+                        // Enable this one
+                        button.setBackgroundResource(R.drawable.rounded_container);
+                        button.setTag("enabled");
+                        removedItems.remove(label);
+                    } else {
                         String state = (String) button.getTag();
-                        String label = button.getText().toString();
                         if ("enabled".equals(state)) {
                             button.setBackgroundResource(R.drawable.rounded_container_disabled);
                             button.setTag("disabled");
@@ -298,29 +402,161 @@ public class ThirdFragment extends Fragment {
                             button.setTag("enabled");
                             removedItems.remove(label);
                         }
-                    });
+                    }
+                });
 
-                    FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(
-                            ViewGroup.LayoutParams.WRAP_CONTENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT
-                    );
-                    params.setMargins(8, 8, 8, 8);
-                    gridLayout.addView(button, params);
+                FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                );
+                params.setMargins(8, 8, 8, 8);
+                gridLayout.addView(button, params);
+            }
+        }
+    }
+
+    private class SwipeGestureListener extends GestureDetector.SimpleOnGestureListener {
+
+        private static final int SWIPE_THRESHOLD = 100;
+        private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            float diffX = e2.getX() - e1.getX();
+
+            if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                if (diffX > 0) {
+                    onSwipeRight();
+                }
+                // Left swipe is ignored
+                return true;
+            }
+
+            return false;
+        }
+
+        private void onSwipeRight() {
+            NavHostFragment.findNavController(ThirdFragment.this)
+                    .navigate(R.id.action_ThirdFragment_to_SecondFragment); // Deals
+        }
+    }
+
+    private void showCustomDogPopup() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.selection_popup, null);
+
+        TextView nameTextView = dialogView.findViewById(R.id.hotdog_name);
+        ImageView imageView = dialogView.findViewById(R.id.hotdog_image);
+        FlexboxLayout gridBread = dialogView.findViewById(R.id.grid_bread);
+        FlexboxLayout gridDog = dialogView.findViewById(R.id.grid_dog);
+        FlexboxLayout gridCheese = dialogView.findViewById(R.id.grid_cheese);
+        FlexboxLayout gridSauces = dialogView.findViewById(R.id.grid_sauces);
+        FlexboxLayout gridToppings = dialogView.findViewById(R.id.grid_toppings);
+
+        nameTextView.setText("Custom Dog");
+        imageView.setImageResource(R.drawable.newyork); // or your custom image
+
+        // Gather unique options
+        List<String> allBread = new ArrayList<>();
+        List<String> allDog = new ArrayList<>();
+        List<String> allCheese = new ArrayList<>();
+        List<String> allSauces = new ArrayList<>();
+        List<String> allToppings = new ArrayList<>();
+
+        for (MenuItems item : MainActivity.menuItems) {
+            addUnique(allBread, item.bread);
+            addUnique(allDog, item.dog);
+            addUnique(allCheese, item.cheese);
+            addUnique(allSauces, item.sauces);
+            addUnique(allToppings, item.toppings);
+        }
+
+        List<String> removedBread = new ArrayList<>(allBread);
+        List<String> removedDog = new ArrayList<>(allDog);
+        List<String> removedCheese = new ArrayList<>(allCheese);
+        List<String> removedSauces = new ArrayList<>(allSauces);
+        List<String> removedToppings = new ArrayList<>(allToppings);
+
+        removedBread.removeIf(b -> b.equalsIgnoreCase("Brioche"));
+        removedDog.removeIf(d -> d.equalsIgnoreCase("Frankfurter"));
+
+        populateGrid(gridBread, String.join(",", allBread), removedBread, true, false);
+        populateGrid(gridDog, String.join(",", allDog), removedDog, true, true);
+        populateGrid(gridCheese, String.join(",", allCheese), removedCheese, false, true);
+        populateGrid(gridSauces, String.join(",", allSauces), removedSauces, false, false);
+        populateGrid(gridToppings, String.join(",", allToppings), removedToppings, false, true);
+
+        builder.setView(dialogView);
+        builder.setPositiveButton("ADD TO BASKET", (dialog, which) -> {
+            if (allBread.size() - removedBread.size() != 1) {
+                Toast.makeText(getContext(), "Please select exactly ONE bread option.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (allDog.size() - removedDog.size() != 1) {
+                Toast.makeText(getContext(), "Please select exactly ONE dog option.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            MenuItems custom = new MenuItems();
+            custom.item_name = "Custom Dog";
+            custom.region = "USA";
+            custom.bread = String.join(",", allBread);
+            custom.dog = String.join(",", allDog);
+            custom.cheese = String.join(",", allCheese);
+            custom.sauces = String.join(",", allSauces);
+            custom.toppings = String.join(",", allToppings);
+
+            double price = 5.00;
+
+            List<String> selectedDog = new ArrayList<>(allDog);
+            selectedDog.removeAll(removedDog);
+            List<String> selectedCheese = new ArrayList<>(allCheese);
+            selectedCheese.removeAll(removedCheese);
+            List<String> selectedToppings = new ArrayList<>(allToppings);
+            selectedToppings.removeAll(removedToppings);
+
+            for (String dog : selectedDog) {
+                String d = dog.toLowerCase(Locale.ROOT);
+                if (d.contains("ft frank") || d.contains("bratwurst")) price += 0.5;
+                if (d.contains("short")) price -= 1.0;
+                if (d.contains("chorizo")) price += 1.0;
+            }
+
+            price += selectedCheese.size() * 0.5;
+
+            for (String topping : selectedToppings) {
+                String t = topping.toLowerCase(Locale.ROOT);
+                if (t.contains("chili")) price += 0.5;
+                if (t.contains("avocado") || t.contains("guac")) price += 1.0;
+                if (t.contains("shrimp salad")) price += 0.5;
+            }
+
+            custom.price = Math.round(price * 100.0) / 100.0;
+
+            BasketItem item = new BasketItem(custom, removedBread, removedDog, removedCheese, removedSauces, removedToppings);
+
+            for (BasketItem b : MainActivity.basket) {
+                if (b.isEqualTo(item)) {
+                    b.quantity++;
+                    return;
                 }
             }
-        } else {
-            Button placeholder = new Button(getContext());
-            placeholder.setText("None");
-            placeholder.setEnabled(false);
-            placeholder.setTextSize(12);
-            placeholder.setAllCaps(true);
-            placeholder.setBackgroundResource(R.drawable.rounded_container);
-            FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-            );
-            params.setMargins(8, 8, 8, 8);
-            gridLayout.addView(placeholder, params);
+
+            MainActivity.basket.add(item);
+            Toast.makeText(getContext(), "Custom Dog added to basket!", Toast.LENGTH_SHORT).show();
+        });
+
+        builder.setNegativeButton("CANCEL", null);
+        builder.show();
+    }
+
+    private void addUnique(List<String> list, String csv) {
+        if (csv == null || csv.equals("N/A")) return;
+        for (String item : csv.split(",")) {
+            String trimmed = item.trim();
+            if (!trimmed.isEmpty() && !list.contains(trimmed)) {
+                list.add(trimmed);
+            }
         }
     }
 

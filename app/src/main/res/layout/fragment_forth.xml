@@ -1,115 +1,187 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/rewards_layout"
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rewards_scroll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="#FFEB8A">
+    android:padding="24dp"
+    android:background="#FFEB8A"
+    android:fillViewport="true"
+    android:clipChildren="false"
+    android:clipToPadding="false">
 
-
-
-    <!-- Progress Background Bar -->
-    <View
-        android:id="@+id/background_bar"
-        android:layout_width="8dp"
-        android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:background="@color/black" />
-
-    <!-- Progress Fill -->
-    <View
-        android:id="@+id/progress_fill"
-        android:layout_width="8dp"
-        android:layout_alignStart="@id/background_bar"
-        android:layout_alignBottom="@id/background_bar"
-        android:background="@color/green"
-        android:layout_height="0dp" />
-
-    <!-- Vertical Stack of Rewards -->
     <LinearLayout
-        android:id="@+id/reward_container"
+        android:id="@+id/rewards_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_toEndOf="@id/background_bar"
-        android:layout_marginStart="16dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:baselineAligned="false">
+        android:clipChildren="false"
+        android:clipToPadding="false">
 
-        <!-- 5000 pts -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="10"
-            android:orientation="vertical">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="🎁 5000 pts" />
-            <ImageButton
-                android:id="@+id/rewardbox_5000"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="fitXY"
-                android:padding="0dp"
-                android:src="@drawable/reward_banquet" />
-        </LinearLayout>
+        <TextView
+            android:id="@+id/menu_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="REWARDS"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textColor="#5B3000"
+            android:layout_gravity="center_horizontal"/>
 
-        <!-- 3000 pts -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="8"
-            android:orientation="vertical">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="🎁 3000 pts" />
-            <ImageButton
-                android:id="@+id/rewardbox_3000"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="fitXY"
-                android:padding="0dp"
-                android:src="@drawable/reward_dog" />
-        </LinearLayout>
+        <TextView
+            android:id="@+id/points_tally"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Points:"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="#5B3000"
+            android:layout_gravity="center_horizontal"
+            android:paddingBottom="16dp"/>
 
-        <!-- 1500 pts -->
+        <!-- Section 1: Large Box (Weight: 2) -->
+        <!-- Section 1: Large Box with image (same style as Meal Upgrade) -->
         <LinearLayout
+            android:id="@+id/free_meal_container"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="4"
-            android:orientation="vertical">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="🎁 1500 pts" />
-            <ImageButton
-                android:id="@+id/rewardbox_1500"
+            android:elevation="4pt"
+            android:orientation="vertical"
+            android:background="@drawable/rounded_yellow_card"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp">
+
+            <!-- Horizontal row with text + image -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="fitXY"
-                android:padding="0dp"
-                android:src="@drawable/reward_meal" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:weightSum="1">
+
+                <!-- Text block on the left -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.4"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:text="Free Meal"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content" />
+
+                    <TextView
+                        android:text="\uD83C\uDF81 1000pts"
+                        android:textSize="14sp"
+                        android:layout_marginTop="8dp"
+                        android:layout_height="wrap_content"
+                        android:layout_width="wrap_content"/>
+                </LinearLayout>
+
+                <!-- Image on the right -->
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.6"
+                    android:src="@drawable/free_meal"
+                    android:contentDescription="Premium Reward"
+                    android:scaleType="fitCenter"/>
+            </LinearLayout>
         </LinearLayout>
 
-        <!-- 500 pts -->
+
+        <!-- Section 2: Horizontal Scroll (Weight: 1) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="2"
+            android:layout_weight="3"
             android:orientation="vertical">
-            <TextView
+
+            <HorizontalScrollView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="🎁 500 pts" />
-            <ImageButton
-                android:id="@+id/rewardbox_500"
+                android:layout_height="match_parent"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/section2_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+                    <!-- Repeat the same structure for other cards -->
+
+
+                </LinearLayout>
+
+            </HorizontalScrollView>
+
+        </LinearLayout>
+
+
+        <!-- Section 3: Medium Box (Weight: 1) -->
+        <LinearLayout
+            android:id="@+id/meal_upgrade_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:elevation="4pt"
+            android:orientation="vertical"
+            android:background="@drawable/rounded_yellow_card"
+            android:padding="16dp"
+            android:layout_marginBottom="15dp">
+
+            <!-- Horizontal row with text + image -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:minHeight="48dp"
-                android:scaleType="fitXY"
-                android:padding="0dp"
-                android:src="@drawable/reward_fries" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:weightSum="1">
+
+                <!-- Text block on the left -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.4"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:text="Meal Upgrade"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+
+                    <TextView
+                        android:text="\uD83C\uDF81 400pts"
+                        android:textSize="14sp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+
+                <!-- Image on the right -->
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.6"
+                    android:src="@drawable/meal_upgrade"
+                    android:contentDescription="Meal Upgrade"
+                    android:scaleType="fitCenter"/>
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <!-- Section 4: Horizontal Scroll (Weight: 1) -->
+        <!-- Section 4: Full-width horizontal layout (no scroll) -->
+        <LinearLayout
+            android:id="@+id/section3_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
         </LinearLayout>
     </LinearLayout>
-</RelativeLayout>
+</ScrollView>

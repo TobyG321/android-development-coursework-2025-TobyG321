@@ -9,10 +9,17 @@ public class DogOfTheDay extends Deal{
     public BasketItem item;
 
     public DogOfTheDay(MenuItems featuredDog) {
-        deal_name = "Dog of the Day";
+        deal_name = "Dog of the Day ("+featuredDog.item_name+")";
         deal_description = "Get the dog of the day for 30% off!";
 
         item = new BasketItem(featuredDog);
-        deal_price = item.baseItem.price/2;
+        deal_price = item.baseItem.price*0.7;
+    }
+
+    public DogOfTheDay(BasketItem featuredDog) {
+        deal_name = "Dog of the Day ("+featuredDog.baseItem.item_name+")";
+        deal_description = "Get the dog of the day for 30% off!";
+        item = featuredDog;
+        deal_price = item.baseItem.price*0.7;
     }
 }

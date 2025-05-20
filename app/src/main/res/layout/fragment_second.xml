@@ -1,168 +1,176 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipeContainer"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingRight="24dp"
-    android:paddingLeft="24dp"
-    android:background="#FFEB8A"
-    android:fillViewport="true"
-    tools:context=".SecondFragment">
+    android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false">
 
     <LinearLayout
-        android:id="@+id/main_layout"
+        android:id="@+id/homeLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingBottom="24dp"
-        android:layout_gravity="top">
+        android:background="#FFEB8A"
+        android:padding="24dp"
+        android:gravity="center_horizontal"
+        android:clipChildren="false"
+        android:clipToPadding="false">
 
-        <!-- Stamp/Voucher container -->
+        <!-- Logo (Fixed size) -->
         <ImageView
-            android:id="@+id/welcome"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/welcome_text"
-            android:scaleType="fitCenter"
-            android:src="@drawable/welcome" />
+            android:id="@+id/logo"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:src="@drawable/hotdog"
+            android:layout_marginTop="24dp" />
 
-        <FrameLayout
-            android:id="@+id/stamp_container"
-            android:layout_width="match_parent"
-            android:layout_height="210dp"
-            android:layout_marginBottom="24dp"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/stamp_card"
-            android:scaleType="centerCrop">
-
-            <!-- Original stamp layout (keep as is) -->
-            <LinearLayout
-                android:id="@+id/stamp_layout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:padding="8dp">
-
-                <!-- Top row: 3 evenly spaced -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:layout_marginBottom="8dp">
-
-                    <ImageView
-                        android:id="@+id/stamp_1"
-                        android:layout_width="90dp"
-                        android:layout_height="90dp"
-                        android:layout_marginHorizontal="4dp"
-                        android:src="@drawable/empty"
-                        android:background="@drawable/circular_background" />
-
-                    <ImageView
-                        android:id="@+id/stamp_2"
-                        android:layout_width="90dp"
-                        android:layout_height="90dp"
-                        android:layout_marginHorizontal="4dp"
-                        android:src="@drawable/empty"
-                        android:background="@drawable/circular_background"/>
-
-                    <ImageView
-                        android:id="@+id/stamp_3"
-                        android:layout_width="90dp"
-                        android:layout_height="90dp"
-                        android:layout_marginHorizontal="4dp"
-                        android:src="@drawable/empty"
-                        android:background="@drawable/circular_background"/>
-                </LinearLayout>
-
-                <!-- Bottom row: 2 centered stamps -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center">
-
-                    <ImageView
-                        android:id="@+id/stamp_4"
-                        android:layout_width="90dp"
-                        android:layout_height="90dp"
-                        android:layout_marginHorizontal="4dp"
-                        android:src="@drawable/empty"
-                        android:background="@drawable/circular_background"/>
-
-                    <ImageView
-                        android:id="@+id/stamp_5"
-                        android:layout_width="90dp"
-                        android:layout_height="90dp"
-                        android:layout_marginHorizontal="4dp"
-                        android:src="@drawable/empty"
-                        android:background="@drawable/circular_background"/>
-                </LinearLayout>
-            </LinearLayout>
-        </FrameLayout>
-
-        <!-- Voucher view (initially hidden) -->
-        <ImageView
-            android:id="@+id/voucher_image"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="-5dp"
-            android:adjustViewBounds="true"
-            android:scaleType="fitXY"
-            android:src="@drawable/voucher"
-            android:visibility="gone"
-            android:contentDescription="Voucher"
-            android:layout_marginBottom="24dp"/>
-
+        <!-- Stamp Card (1 weight) -->
         <LinearLayout
+            android:id="@+id/stampCard"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/rounded_yellow_card"
             android:orientation="horizontal"
-            android:paddingStart="0dp"
-            android:paddingEnd="0dp">
-
-            <ImageButton
-                android:id="@+id/deals_button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="12dp"
-                android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
-
-                android:contentDescription="Deals"
-                android:src="@drawable/deals3"
-                android:padding="1dp"/>
-
-            <ImageButton
-                android:id="@+id/menu_button"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:layout_weight="1"
-                android:adjustViewBounds="true"
-
-                android:contentDescription="Menu"
-                android:padding="1dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/menu2" />
+            android:gravity="center"
+            android:elevation="4dp">
         </LinearLayout>
 
-        <!-- Rewards Button -->
-        <ImageButton
-            android:id="@+id/rewards_button"
+        <!-- Order Button (1 weight) -->
+        <!-- Orders Button (1 weight) -->
+        <LinearLayout
+            android:id="@+id/ordersButton"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/rewards"
-            android:scaleType="fitCenter"
-            android:src="@drawable/rewards2"
-            android:padding="1dp"/>
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/rounded_yellow_card"
+            android:orientation="horizontal"
+            android:padding="12dp"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:elevation="4dp">
 
+            <ImageView
+                android:id="@+id/ic_orders"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_orders"
+                android:layout_gravity="center" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ORDERS"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_gravity="center"/>
+        </LinearLayout>
+
+        <!-- Deals + Menu Row (2 weight) -->
+        <LinearLayout
+            android:id="@+id/dealsMenuRow"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp">
+
+            <LinearLayout
+                android:id="@+id/dealsButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/rounded_yellow_card"
+                android:padding="12dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true"
+                android:elevation="4dp">
+
+                <ImageView
+                    android:id="@+id/ic_deals"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_deals"
+                    android:layout_gravity="center" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="DEALS"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"/>
+            </LinearLayout>
+
+            <Space
+                android:layout_width="16dp"
+                android:layout_height="match_parent" />
+
+            <LinearLayout
+                android:id="@+id/menuButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/rounded_yellow_card"
+                android:padding="12dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true"
+                android:elevation="4dp">
+
+                <ImageView
+                    android:id="@+id/ic_hotdog"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_hotdog"
+                    android:layout_gravity="center" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MENU"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Rewards Button (1 weight) -->
+        <LinearLayout
+            android:id="@+id/rewardsButton"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/rounded_yellow_card"
+            android:orientation="horizontal"
+            android:padding="12dp"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:elevation="4dp">
+
+            <ImageView
+                android:id="@+id/ic_rewards"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_rewards"
+                android:layout_gravity="center" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="REWARDS"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_gravity="center"/>
+        </LinearLayout>
     </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+</FrameLayout>

@@ -89,6 +89,14 @@ public class FirstFragment extends Fragment {
                 return;
             }
 
+            // Inflate and show loading dialog
+            View loadingView = LayoutInflater.from(getContext()).inflate(R.layout.loading_dialog, null);
+            AlertDialog loadingDialog = new AlertDialog.Builder(getContext())
+                    .setView(loadingView)
+                    .setCancelable(false) // Prevent dismiss by outside touch or back button
+                    .create();
+            loadingDialog.show();
+
             JSONObject jsonBody = new JSONObject();
             try {
                 jsonBody.put("username", username);
@@ -105,7 +113,7 @@ public class FirstFragment extends Fragment {
                     url,
                     jsonBody,
                     response -> {
-                        Log.d("LOGIN_RESPONSE", response.toString());  // 🔍 Log entire JSON response
+                        loadingDialog.dismiss();
 
                         if (response.has("error")) {
                             try {
@@ -138,20 +146,14 @@ public class FirstFragment extends Fragment {
                         }
                     },
                     error -> {
-                        if (error.networkResponse != null && error.networkResponse.data != null) {
-                            String body = new String(error.networkResponse.data);
-                            Log.e("LOGIN_ERROR_BODY", body);  // 🔍 Log raw error body
-                        }
+                        loadingDialog.dismiss();
                         error.printStackTrace();
                         Toast.makeText(getContext(), "Error connecting to server", Toast.LENGTH_SHORT).show();
                     }
             );
 
-
             queue.add(request);
         });
-
-
 
         // ✅ Mutable reference
         final String[] selectedAddress = {""};
@@ -188,8 +190,8 @@ public class FirstFragment extends Fragment {
                         List<Address> addresses = geocoder.getFromLocationName(postcode, 5);
                         if (addresses != null && !addresses.isEmpty()) {
                             List<String> displayList = new ArrayList<>();
-                            for (Address addr : addresses) {
-                                String line = addr.getAddressLine(0);
+                            for (Address address : addresses) {
+                                String line = address.getAddressLine(0);
                                 if (line != null) displayList.add(line);
                             }
 

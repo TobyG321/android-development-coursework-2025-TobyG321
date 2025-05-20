@@ -27,9 +27,11 @@ import uk.ac.hope.mcse.android.coursework.model.AppDatabase;
 import uk.ac.hope.mcse.android.coursework.model.BasketItem;
 import uk.ac.hope.mcse.android.coursework.model.MenuDao;
 import uk.ac.hope.mcse.android.coursework.model.MenuItems;
+import uk.ac.hope.mcse.android.coursework.model.PastOrder;
 import uk.ac.hope.mcse.android.coursework.model.User;
 import uk.ac.hope.mcse.android.coursework.model.UserDao;
 import uk.ac.hope.mcse.android.coursework.model.deals.Deal;
+import uk.ac.hope.mcse.android.coursework.model.rewards.Reward;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -49,7 +51,9 @@ public class MainActivity extends AppCompatActivity {
     public static List<BasketItem> basket = new ArrayList<>();
 
     public static List<Deal> deals = new ArrayList<>();
-    public static List<String> rewards = new ArrayList<>();
+    public static List<Reward> rewards = new ArrayList<>();
+    public static List<PastOrder> pastOrders = new ArrayList<>();
+
     public static AppDatabase db;
 
     // Replace this with your actual published sheet CSV URL
@@ -78,47 +82,55 @@ public class MainActivity extends AppCompatActivity {
         });
 
         navController.addOnDestinationChangedListener(
-                new NavController.OnDestinationChangedListener() {
-                    @Override
-                    public void onDestinationChanged(@NonNull NavController controller,
-                                                     @NonNull NavDestination destination,
-                                                     @Nullable Bundle arguments) {
-                        if (destination.getId() == R.id.FirstFragment || destination.getId() == R.id.SixthFragment) {
-                            binding.fab.hide();
-                            binding.toolbar.setVisibility(View.GONE);
+                (controller, destination, arguments) -> {
+                    int destId = destination.getId();
+
+                    // Hide FAB completely on FirstFragment
+                    if (destId == R.id.FirstFragment) {
+                        binding.fab.hide();
+                        binding.toolbar.setVisibility(View.GONE);
+                        return;
+                    }
+
+                    binding.fab.show();
+                    binding.toolbar.setVisibility(View.GONE);
+
+                    boolean basketNotEmpty = !basket.isEmpty();
+                    boolean dealNotEmpty = !deals.isEmpty();
+                    boolean rewardNotEmpty = !rewards.isEmpty();
+
+                    Log.d("DESTINATION", "Basket: " + basketNotEmpty);
+                    Log.d("DESTINATION", "Deals: " + dealNotEmpty);
+                    Log.d("DESTINATION", "Rewards: " + rewardNotEmpty);
+
+                    if (destId == R.id.SixthFragment) {
+                        // Always show home icon in checkout
+                        binding.fab.setImageResource(R.drawable.home_fab);
+                        binding.fab.setOnClickListener(v -> navController.navigate(R.id.action_home));
+                    } else if (destId == R.id.ThirdFragment) {
+                        // Always show basket icon on menu
+                        binding.fab.setImageResource(R.drawable.cart_fab);
+                        binding.fab.setOnClickListener(v -> navController.navigate(R.id.action_checkout));
+                    } else if (destId == R.id.SecondFragment ||
+                            destId == R.id.ForthFragment ||
+                            destId == R.id.FifthFragment ||
+                            destId == R.id.SeventhFragment) {
+                        if (basketNotEmpty || dealNotEmpty || rewardNotEmpty) {
+                            binding.fab.setImageResource(R.drawable.cart_fab);
+                            binding.fab.setOnClickListener(v -> navController.navigate(R.id.action_checkout));
                         } else {
-                            binding.fab.show();
-                            binding.toolbar.setVisibility(View.GONE);
-                            if(!basket.isEmpty()) {
-                                binding.fab.setImageResource(R.drawable.cart_fab);
-                                binding.fab.setOnClickListener(v -> {
-                                    Log.d("FAB_CLICK", "FAB clicked");
-                                    for (BasketItem item : basket) {
-                                        Log.d("FAB_CLICK", "Item: " + item.baseItem.item_name);
-                                    }
-                                    navController.navigate(R.id.action_checkout);
-                                });
-                            }
-                            else {
-                                if (destination.getId() == R.id.SecondFragment) {
-                                    binding.fab.setImageResource(R.drawable.hotdog_fab);
-                                    binding.fab.setOnClickListener(v -> {
-                                        navController.navigate(R.id.action_SecondFragment_to_ThirdFragment);
-                                    });
-                                } else if (destination.getId() == R.id.ThirdFragment) {
-                                    binding.fab.setImageResource(R.drawable.cart_fab);
-                                    binding.fab.setOnClickListener(v -> {
-                                        navController.navigate(R.id.action_checkout);
-                                    });
-                                } else if (destination.getId() == R.id.ForthFragment || destination.getId() == R.id.FifthFragment) {
-                                    binding.fab.setOnClickListener(v -> {
-                                        navController.navigate(R.id.action_menu);
-                                    });
-                                }
+                            binding.fab.setImageResource(R.drawable.hotdog_fab);
+                            if (destId == R.id.SecondFragment) {
+                                // Valid only in SecondFragment
+                                binding.fab.setOnClickListener(v -> navController.navigate(R.id.action_SecondFragment_to_ThirdFragment));
+                            } else {
+                                // Use global fallback
+                                binding.fab.setOnClickListener(v -> navController.navigate(R.id.action_menu));
                             }
                         }
                     }
                 });
+
 
         db = Room.databaseBuilder(getApplicationContext(),
                         AppDatabase.class, "UpDoggData")

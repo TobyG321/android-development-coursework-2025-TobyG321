@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:layout_marginVertical="6dp"
+    android:layout_marginHorizontal="4dp"
+    android:background="@drawable/rounded_yellow_card"
+    android:elevation="3dp">
+
+    <!-- Header: Order No. -->
+    <TextView
+        android:id="@+id/order_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Order No."
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#5B3000" />
+
+    <!-- Underline below order number -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="8dp"
+        android:background="#5B3000" />
+
+    <!-- Row: Date, Time and Dropdown Arrow -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="bottom">
+
+        <!-- Dropdown Icon -->
+        <ImageView
+            android:id="@+id/dropdown_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/ic_arrow_drop_down"
+            android:contentDescription="Expand Order"
+            android:padding="8dp" />
+
+        <!-- Date and Time -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/order_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="DD-MM-YYYY"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#5B3000" />
+
+            <TextView
+                android:id="@+id/order_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="hh:mm"
+                android:textSize="14sp"
+                android:textColor="#5B3000" />
+
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Expandable Order Content -->
+    <LinearLayout
+        android:id="@+id/order_contents_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:paddingTop="8dp" />
+</LinearLayout>

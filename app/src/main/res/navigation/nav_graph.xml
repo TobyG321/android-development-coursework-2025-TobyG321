@@ -26,33 +26,73 @@
 
         <action
             android:id="@+id/action_SecondFragment_to_ThirdFragment"
-            app:destination="@id/ThirdFragment" />
+            app:destination="@id/ThirdFragment"
+            app:enterAnim="@anim/panel_slide_in_right"
+            app:exitAnim="@anim/panel_slide_out_left"
+            app:popEnterAnim="@anim/panel_slide_in_left"
+            app:popExitAnim="@anim/panel_slide_out_right"/>
 
         <action
             android:id="@+id/to_rewards"
-            app:destination="@id/ForthFragment" />
+            app:destination="@id/ForthFragment"
+            app:enterAnim="@anim/panel_slide_in_up"
+            app:exitAnim="@anim/panel_slide_out_up"
+            app:popEnterAnim="@anim/panel_slide_in_down"
+            app:popExitAnim="@anim/panel_slide_out_down"/>
 
         <action
             android:id="@+id/action_SecondFragment_to_FifthFragment"
-            app:destination="@id/FifthFragment" />
+            app:destination="@id/FifthFragment"
+            app:enterAnim="@anim/panel_slide_in_left"
+            app:exitAnim="@anim/panel_slide_out_right"
+            app:popEnterAnim="@anim/panel_slide_in_right"
+            app:popExitAnim="@anim/panel_slide_out_left"/>
 
+        <action
+            android:id="@+id/action_SecondFragment_to_SeventhFragment"
+            app:destination="@id/SeventhFragment"
+            app:enterAnim="@anim/panel_slide_in_down"
+            app:exitAnim="@anim/panel_slide_out_down"
+            app:popEnterAnim="@anim/panel_slide_in_up"
+            app:popExitAnim="@anim/panel_slide_out_up"/>
     </fragment>
+
     <fragment
         android:id="@+id/ThirdFragment"
         android:name="uk.ac.hope.mcse.android.coursework.ThirdFragment"
         android:label="@string/third_fragment_label"
         tools:layout="@layout/fragment_third">
+
+        <action
+            android:id="@+id/action_ThirdFragment_to_SecondFragment"
+            app:destination="@id/SecondFragment"
+            app:enterAnim="@anim/panel_slide_in_left"
+            app:exitAnim="@anim/panel_slide_out_right"
+            app:popEnterAnim="@anim/panel_slide_in_right"
+            app:popExitAnim="@anim/panel_slide_out_left"/>
     </fragment>
 
     <fragment
         android:id="@+id/ForthFragment"
         android:name="uk.ac.hope.mcse.android.coursework.ForthFragment"
-        android:label="@string/forth_fragment_label"
+        android:label="Rewards"
         tools:layout="@layout/fragment_forth">
 
         <action
+            android:id="@+id/action_ForthFragment_to_SecondFragment"
+            app:destination="@id/SecondFragment"
+            app:enterAnim="@anim/panel_slide_in_down"
+            app:exitAnim="@anim/panel_slide_out_down"
+            app:popEnterAnim="@anim/panel_slide_in_up"
+            app:popExitAnim="@anim/panel_slide_out_up"/>
+
+        <action
             android:id="@+id/action_ForthFragment_to_ThirdFragment"
-            app:destination="@id/ThirdFragment" />
+            app:destination="@id/ThirdFragment"
+            app:enterAnim="@anim/panel_slide_in_right"
+            app:exitAnim="@anim/panel_slide_out_left"
+            app:popEnterAnim="@anim/panel_slide_in_left"
+            app:popExitAnim="@anim/panel_slide_out_right"/>
     </fragment>
 
     <fragment
@@ -60,6 +100,14 @@
         android:name="uk.ac.hope.mcse.android.coursework.FifthFragment"
         android:label="Deals"
         tools:layout="@layout/fragment_fifth">
+
+        <action
+            android:id="@+id/action_FifthFragment_to_SecondFragment"
+            app:destination="@id/SecondFragment"
+            app:enterAnim="@anim/panel_slide_in_right"
+            app:exitAnim="@anim/panel_slide_out_left"
+            app:popEnterAnim="@anim/panel_slide_in_left"
+            app:popExitAnim="@anim/panel_slide_out_right"/>
     </fragment>
 
     <fragment
@@ -67,6 +115,21 @@
         android:name="uk.ac.hope.mcse.android.coursework.SixthFragment"
         android:label="Checkout"
         tools:layout="@layout/fragment_sixth">
+    </fragment>
+
+    <fragment
+        android:id="@+id/SeventhFragment"
+        android:name="uk.ac.hope.mcse.android.coursework.SeventhFragment"
+        android:label="Orders"
+        tools:layout="@layout/fragment_seventh">
+
+        <action
+            android:id="@+id/action_SeventhFragment_to_SecondFragment"
+            app:destination="@id/SecondFragment"
+            app:enterAnim="@anim/panel_slide_in_up"
+            app:exitAnim="@anim/panel_slide_out_up"
+            app:popEnterAnim="@anim/panel_slide_in_down"
+            app:popExitAnim="@anim/panel_slide_out_down"/>
     </fragment>
 
     <action
@@ -80,5 +143,9 @@
     <action
         android:id="@+id/action_menu"
         app:destination="@+id/ThirdFragment" />
+
+    <action
+        android:id="@+id/action_home"
+        app:destination="@+id/SecondFragment" />
 
 </navigation>
