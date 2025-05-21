@@ -127,22 +127,24 @@ public class SixthFragment extends Fragment {
             if (item.baseItem.item_name.equalsIgnoreCase("Custom Dog")) {
                 customizations.append("Selections:\n");
 
-                addSelections(customizations, "Bread", item.baseItem.bread, item.removedBread);
-                addSelections(customizations, "Dog", item.baseItem.dog, item.removedDog);
-                addSelections(customizations, "Cheese", item.baseItem.cheese, item.removedCheese);
-                addSelections(customizations, "Sauces", item.baseItem.sauces, item.removedSauces);
-                addSelections(customizations, "Toppings", item.baseItem.toppings, item.removedToppings);
+                appendSelectedInline(customizations, "  ", "Bread", item.baseItem.bread, item.removedBread);
+                appendSelectedInline(customizations, "  ", "Dog", item.baseItem.dog, item.removedDog);
+                appendSelectedInline(customizations, "  ", "Cheese", item.baseItem.cheese, item.removedCheese);
+                appendSelectedInline(customizations, "  ", "Sauces", item.baseItem.sauces, item.removedSauces);
+                appendSelectedInline(customizations, "  ", "Toppings", item.baseItem.toppings, item.removedToppings);
             } else {
-                if (!item.removedBread.isEmpty())
-                    customizations.append("No ").append(String.join(", ", item.removedBread)).append(". ");
-                if (!item.removedDog.isEmpty())
-                    customizations.append("No ").append(String.join(", ", item.removedDog)).append(". ");
-                if (!item.removedCheese.isEmpty())
-                    customizations.append("No ").append(String.join(", ", item.removedCheese)).append(". ");
-                if (!item.removedSauces.isEmpty())
-                    customizations.append("No ").append(String.join(", ", item.removedSauces)).append(". ");
-                if (!item.removedToppings.isEmpty())
-                    customizations.append("No ").append(String.join(", ", item.removedToppings)).append(". ");
+                List<String> removed = new ArrayList<>();
+                if (item.removedBread != null) removed.addAll(item.removedBread);
+                if (item.removedDog != null) removed.addAll(item.removedDog);
+                if (item.removedCheese != null) removed.addAll(item.removedCheese);
+                if (item.removedSauces != null) removed.addAll(item.removedSauces);
+                if (item.removedToppings != null) removed.addAll(item.removedToppings);
+
+                if (!removed.isEmpty()) {
+                    customizations.append("No: ").append(String.join(", ", removed));
+                } else {
+                    customizations.append("No customizations");
+                }
             }
 
             if (customizations.length() == 0) customizations.append("No customizations");
@@ -317,7 +319,7 @@ public class SixthFragment extends Fragment {
             Log.d("Rewards", "Reward: " + reward.reward_name);
             // Header Text
             TextView rewardHeader = new TextView(getContext());
-            rewardHeader.setText(reward.reward_name + " - FREE");
+            rewardHeader.setText(reward.reward_name);
             rewardHeader.setTypeface(null, Typeface.BOLD);
             rewardHeader.setTextSize(18f);
             rewardHeader.setPadding(0, 32, 0, 8);
@@ -383,8 +385,10 @@ public class SixthFragment extends Fragment {
             }
             else if (reward instanceof FreeSide) {
                 nameView.setText("Free Side");
-                customizationsView.setText("Get a free side of " + ((FreeSide) reward).side + "!");
-                imageView.setImageResource(R.drawable.fries); // Example icon
+                String sideName = ((FreeSide) reward).side.toLowerCase().replace(" ", "");
+                customizationsView.setVisibility(View.GONE);
+                int imageResId = getResources().getIdentifier(sideName, "drawable", getContext().getPackageName());
+                imageView.setImageResource(imageResId != 0 ? imageResId : R.drawable.drink);
             } else if (reward instanceof FreeMeal) {
                 FreeMeal freeMeal = (FreeMeal) reward;
 
@@ -566,22 +570,37 @@ public class SixthFragment extends Fragment {
 
         new Thread(() -> {
             try {
-                // Date and time
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
                 SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
                 Date now = new Date();
                 String date = dateFormat.format(now);
                 String time = timeFormat.format(now);
 
-                // Build order string
                 StringBuilder itemQuantityBuilder = new StringBuilder();
                 if (!MainActivity.basket.isEmpty()) {
                     itemQuantityBuilder.append("Items:\n");
-                    boolean hasItems = false;
                     for (BasketItem item : MainActivity.basket) {
-                        if (hasItems) itemQuantityBuilder.append(", ");
-                        itemQuantityBuilder.append(item.baseItem.item_name).append(" x").append(item.quantity);
-                        hasItems = true;
+                        itemQuantityBuilder.append(item.baseItem.item_name).append(" x").append(item.quantity).append("\n");
+
+                        if (item.baseItem.item_name.equalsIgnoreCase("Custom Dog")) {
+                            itemQuantityBuilder.append("  Selections:\n");
+                            appendSelectedInline(itemQuantityBuilder, "    ", "Bread", item.baseItem.bread, item.removedBread);
+                            appendSelectedInline(itemQuantityBuilder, "    ", "Dog", item.baseItem.dog, item.removedDog);
+                            appendSelectedInline(itemQuantityBuilder, "    ", "Cheese", item.baseItem.cheese, item.removedCheese);
+                            appendSelectedInline(itemQuantityBuilder, "    ", "Sauces", item.baseItem.sauces, item.removedSauces);
+                            appendSelectedInline(itemQuantityBuilder, "    ", "Toppings", item.baseItem.toppings, item.removedToppings);
+                        } else {
+                            List<String> removed = new ArrayList<>();
+                            if (item.removedBread != null) removed.addAll(item.removedBread);
+                            if (item.removedDog != null) removed.addAll(item.removedDog);
+                            if (item.removedCheese != null) removed.addAll(item.removedCheese);
+                            if (item.removedSauces != null) removed.addAll(item.removedSauces);
+                            if (item.removedToppings != null) removed.addAll(item.removedToppings);
+
+                            if (!removed.isEmpty()) {
+                                itemQuantityBuilder.append("  No: ").append(String.join(", ", removed)).append("\n");
+                            }
+                        }
                     }
                     itemQuantityBuilder.append("\n");
                 }
@@ -589,107 +608,19 @@ public class SixthFragment extends Fragment {
                 if (!MainActivity.deals.isEmpty()) {
                     itemQuantityBuilder.append("Deals:\n");
                     for (Deal deal : MainActivity.deals) {
-                        itemQuantityBuilder.append(deal.deal_name);
-
-                        if (deal instanceof DogOfTheDay) {
-                            DogOfTheDay d = (DogOfTheDay) deal;
-                            itemQuantityBuilder.append("\n    Dog: ").append(d.item.baseItem.item_name +"\n");
-                            appendCustomizations(itemQuantityBuilder, d.item, "    ");
-                        } else if (deal instanceof Roulette) {
-                            Roulette r = (Roulette) deal;
-                            itemQuantityBuilder.append("\n    Dog: ").append(r.item.baseItem.item_name +"\n");
-                            if (r.spicy) itemQuantityBuilder.append(" (Spicy)");
-                            appendCustomizations(itemQuantityBuilder, r.item, "    ");
-                        } else if (deal instanceof MealForOne) {
-                            MealForOne m1 = (MealForOne) deal;
-                            itemQuantityBuilder.append("\n    Dog: ").append(m1.dog.baseItem.item_name +"\n");
-                            appendCustomizations(itemQuantityBuilder, m1.dog, "    ");
-                            itemQuantityBuilder.append("    Sides: ").append(String.join(", ", m1.sides)).append("\n");
-                            itemQuantityBuilder.append("    Drink: ").append(m1.drink);
-                        } else if (deal instanceof MealForTwo) {
-                            MealForTwo m2 = (MealForTwo) deal;
-                            itemQuantityBuilder.append("\n    Dog 1: ").append(m2.dogs.get(0).baseItem.item_name +"\n");
-                            appendCustomizations(itemQuantityBuilder, m2.dogs.get(0), "    ");
-                            itemQuantityBuilder.append("    Sides: ").append(String.join(", ", m2.sides1)).append("\n");
-                            itemQuantityBuilder.append("    Drink: ").append(m2.drinks.get(0)).append("\n");
-
-                            if (m2.dogs.size() > 1) {
-                                itemQuantityBuilder.append("    Dog 2: ").append(m2.dogs.get(1).baseItem.item_name).append("\n");
-                                appendCustomizations(itemQuantityBuilder, m2.dogs.get(1), "    ");
-                                if (m2.sides2 != null)
-                                    itemQuantityBuilder.append("    Sides: ").append(String.join(", ", m2.sides2)).append("\n");
-                                if (m2.drinks.size() > 1)
-                                    itemQuantityBuilder.append("    Drink: ").append(m2.drinks.get(1)).append("\n");
-                            }
-                        }
-                        itemQuantityBuilder.append("\n");
+                        itemQuantityBuilder.append(deal.deal_name).append("\n");
                     }
                 }
 
                 if (!MainActivity.rewards.isEmpty()) {
                     itemQuantityBuilder.append("Rewards:\n");
-
                     for (Reward reward : MainActivity.rewards) {
-                        if (reward instanceof FreeSide) {
-                            itemQuantityBuilder.append("  • Free Side: ")
-                                    .append(((FreeSide) reward).side)
-                                    .append("\n");
-
-                        } else if (reward instanceof FreeDog) {
-                            FreeDog freeDog = (FreeDog) reward;
-                            BasketItem dog = freeDog.dog;
-
-                            itemQuantityBuilder.append("  • Free Dogg\n");
-                            itemQuantityBuilder.append("    Dog: ").append(dog.baseItem.item_name).append("\n");
-                            appendCustomizations(itemQuantityBuilder, dog, "    ");
-
-                        } else if (reward instanceof MealUpgrade) {
-                            MealUpgrade upgrade = (MealUpgrade) reward;
-                            itemQuantityBuilder.append("  • Meal Upgrade\n");
-
-                            if (upgrade.meal != null && upgrade.meal.dog != null) {
-                                BasketItem dog = upgrade.meal.dog;
-
-                                itemQuantityBuilder.append("    Dog: ").append(dog.baseItem.item_name).append("\n");
-                                appendCustomizations(itemQuantityBuilder, dog, "    ");
-
-                                if (upgrade.meal.sides != null && !upgrade.meal.sides.isEmpty()) {
-                                    itemQuantityBuilder.append("    Sides: ").append(String.join(", ", upgrade.meal.sides)).append("\n");
-                                }
-                                if (upgrade.meal.drink != null && !upgrade.meal.drink.isEmpty()) {
-                                    itemQuantityBuilder.append("    Drink: ").append(upgrade.meal.drink).append("\n");
-                                }
-                            } else {
-                                itemQuantityBuilder.append("    (Pending selection)\n");
-                            }
-
-                        } else if (reward instanceof FreeMeal) {
-                            FreeMeal freeMeal = (FreeMeal) reward;
-                            itemQuantityBuilder.append("  • Free Meal\n");
-
-                            if (freeMeal.meal != null && freeMeal.meal.dog != null) {
-                                BasketItem dog = freeMeal.meal.dog;
-
-                                itemQuantityBuilder.append("    Dog: ").append(dog.baseItem.item_name).append("\n");
-                                appendCustomizations(itemQuantityBuilder, dog, "    ");
-
-                                if (freeMeal.meal.sides != null && !freeMeal.meal.sides.isEmpty()) {
-                                    itemQuantityBuilder.append("    Sides: ").append(String.join(", ", freeMeal.meal.sides)).append("\n");
-                                }
-                                if (freeMeal.meal.drink != null && !freeMeal.meal.drink.isEmpty()) {
-                                    itemQuantityBuilder.append("    Drink: ").append(freeMeal.meal.drink).append("\n");
-                                }
-                            } else {
-                                itemQuantityBuilder.append("    (Pending selection)\n");
-                            }
-                        }
+                        itemQuantityBuilder.append("  • ").append(reward.reward_name).append("\n");
                     }
                 }
 
-
                 String itemQuantity = itemQuantityBuilder.toString();
 
-                // Calculate cost
                 double total = 0;
                 for (BasketItem item : MainActivity.basket) {
                     total += item.price * Math.max(item.quantity, 1);
@@ -708,7 +639,38 @@ public class SixthFragment extends Fragment {
 
                 double finalPrice = (MainActivity.currentUser.stamps == 5) ? total * 0.8 : total;
 
-                // Send to Google Sheets
+                requireActivity().runOnUiThread(() -> {
+                    if (finalPrice < 10.0) {
+                        double needed = 10.0 - finalPrice;
+                        new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                                .setTitle("Spend More to Earn a Stamp")
+                                .setMessage(String.format(Locale.UK,
+                                        "You need to spend £%.2f more to earn a stamp. Do you want to continue anyway?",
+                                        needed))
+                                .setPositiveButton("Yes", (dialog, which) -> {
+                                    sendOrderToSheet(date, time, itemQuantity, finalPrice, loadingDialog);
+                                })
+                                .setNegativeButton("No", (dialog, which) -> loadingDialog.dismiss())
+                                .setCancelable(false)
+                                .show();
+                    } else {
+                        sendOrderToSheet(date, time, itemQuantity, finalPrice, loadingDialog);
+                    }
+                });
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                requireActivity().runOnUiThread(() -> {
+                    loadingDialog.dismiss();
+                    Toast.makeText(requireContext(), "Error placing order: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
+            }
+        }).start();
+    }
+
+    private void sendOrderToSheet(String date, String time, String itemQuantity, double finalPrice, Dialog loadingDialog) {
+        new Thread(() -> {
+            try {
                 URL url = new URL("https://script.google.com/macros/s/AKfycbyb9TK2THnGlqFAEh5phsGwyt6vmGP0ZWDYmvH70yNTdikIIxBtRGO4O4QdAenleV3N/exec");
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");
@@ -734,22 +696,20 @@ public class SixthFragment extends Fragment {
                     loadingDialog.dismiss();
 
                     if (responseCode == 200) {
-                        // Update user stats
-                        if (MainActivity.currentUser.stamps == 5) {
-                            MainActivity.currentUser.stamps = 1;
-                        } else {
-                            MainActivity.currentUser.stamps += 1;
+                        if(finalPrice >= 10) {
+                            if (MainActivity.currentUser.stamps == 5) {
+                                MainActivity.currentUser.stamps = 1;
+                            } else {
+                                MainActivity.currentUser.stamps += 1;
+                            }
                         }
 
-                        for (Reward reward : MainActivity.rewards) {
-                            MainActivity.currentUser.points -= (int) reward.points_cost;
-                        }
+                        NavHostFragment.findNavController(SixthFragment.this)
+                                .navigate(R.id.action_home);
 
                         MainActivity.currentUser.points += ((int) finalPrice) * 10;
-
                         Toast.makeText(requireContext(), "Order placed successfully!", Toast.LENGTH_LONG).show();
 
-                        // Clear UI
                         MainActivity.basket.clear();
                         MainActivity.deals.clear();
                         MainActivity.rewards.clear();
@@ -758,7 +718,7 @@ public class SixthFragment extends Fragment {
                         basketContainer.removeAllViews();
                         updateTotalPrice(MainActivity.basket, requireView());
 
-                        // Update user to sheet
+                        // Update user
                         new Thread(() -> {
                             try {
                                 URL updateUrl = new URL("https://script.google.com/macros/s/AKfycbxEC6tlQwVkjiq0UV5Gk7BFVzTiOGeOfk3XE93mnkgaBuygDLrzFmR8rL-vr6D05i1IvQ/exec?route=updateUser");
@@ -777,8 +737,7 @@ public class SixthFragment extends Fragment {
                                     os.write(input, 0, input.length);
                                 }
 
-                                int updateResponse = updateConn.getResponseCode();
-                                Log.d("UpdateUser", "Update response code: " + updateResponse);
+                                Log.d("UpdateUser", "User updated");
 
                             } catch (Exception ex) {
                                 Log.e("UpdateUser", "Error: " + ex.getMessage());
@@ -819,7 +778,6 @@ public class SixthFragment extends Fragment {
             }
         }
     }
-
 
     private void updateTotalPrice(List<BasketItem> basketItems, View view) {
         finalPrice = 0;
@@ -866,34 +824,6 @@ public class SixthFragment extends Fragment {
         } else {
             // No discount, just show total normally
             totalText.setText(String.format("Total: $%.2f", finalPrice));
-        }
-    }
-
-    private void appendCustomizations(StringBuilder builder, BasketItem dog, String indent) {
-        if (dog.baseItem.item_name.equalsIgnoreCase("Custom Dog")) {
-            builder.append(indent).append("Selections:\n");
-
-            appendSelectedInline(builder, indent + "  ", "Bread", dog.baseItem.bread, dog.removedBread);
-            appendSelectedInline(builder, indent + "  ", "Dog", dog.baseItem.dog, dog.removedDog);
-            appendSelectedInline(builder, indent + "  ", "Cheese", dog.baseItem.cheese, dog.removedCheese);
-            appendSelectedInline(builder, indent + "  ", "Sauces", dog.baseItem.sauces, dog.removedSauces);
-            appendSelectedInline(builder, indent + "  ", "Toppings", dog.baseItem.toppings, dog.removedToppings);
-        } else {
-            List<String> removed = new ArrayList<>();
-            if (dog.removedBread != null) removed.addAll(dog.removedBread);
-            if (dog.removedDog != null) removed.addAll(dog.removedDog);
-            if (dog.removedCheese != null) removed.addAll(dog.removedCheese);
-            if (dog.removedSauces != null) removed.addAll(dog.removedSauces);
-            if (dog.removedToppings != null) removed.addAll(dog.removedToppings);
-
-            if (!removed.isEmpty()) {
-                builder.append(indent).append("No: ").append(String.join(", ", removed)).append("\n");
-            }
-        }
-
-        // ✅ Ensure line break between customization and next deal part
-        if (!builder.toString().endsWith("\n")) {
-            builder.append("\n");
         }
     }
 

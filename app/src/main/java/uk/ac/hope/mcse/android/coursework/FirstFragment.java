@@ -21,6 +21,7 @@ import uk.ac.hope.mcse.android.coursework.model.UserDao;
 
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -324,7 +325,149 @@ public class FirstFragment extends Fragment {
             dialog.show();
 
         });
+
+        binding.textviewForgotPassword.setOnClickListener(v -> {
+            View emailDialogView = LayoutInflater.from(getContext()).inflate(R.layout.reset_password_popup, null);
+            EditText editEmail = emailDialogView.findViewById(R.id.reset_email);
+            editEmail.setHint("Email");
+
+
+            new AlertDialog.Builder(getContext())
+                    .setTitle("Reset Password")
+                    .setView(emailDialogView)
+                    .setPositiveButton("Submit", (dialog, which) -> {
+                        String email = editEmail.getText().toString().trim();
+                        if (email.isEmpty()) {
+                            Toast.makeText(getContext(), "Enter your email", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        JSONObject json = new JSONObject();
+                        try {
+                            json.put("email", email);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        String url = "https://script.google.com/macros/s/AKfycbxEC6tlQwVkjiq0UV5Gk7BFVzTiOGeOfk3XE93mnkgaBuygDLrzFmR8rL-vr6D05i1IvQ/exec?route=requestReset";
+
+                        AlertDialog loadingDialog = showLoadingDialog("Checking email...");
+                        JsonObjectRequest request = new JsonObjectRequest(
+                                Request.Method.POST,
+                                url,
+                                json,
+                                response -> {
+                                    if (response.has("success")) {
+                                        Toast.makeText(getContext(), "Code sent to your email", Toast.LENGTH_SHORT).show();
+                                        showResetCodeDialog(email);
+                                    } else {
+                                        Toast.makeText(getContext(), "Email not found", Toast.LENGTH_SHORT).show();
+                                    }
+                                    loadingDialog.dismiss();
+                                },
+                                error -> {
+                                    error.printStackTrace();
+                                    Toast.makeText(getContext(), "Request failed", Toast.LENGTH_SHORT).show();
+                                    loadingDialog.dismiss();
+                                });
+
+                        Volley.newRequestQueue(requireContext()).add(request);
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
+        });
+
     }
+
+    private void showResetCodeDialog(String email) {
+        View codeDialogView = LayoutInflater.from(getContext()).inflate(R.layout.reset_password_popup, null);
+        EditText editCode = codeDialogView.findViewById(R.id.reset_email);
+        editCode.setHint("Verification Code");
+
+        new AlertDialog.Builder(getContext())
+                .setTitle("Enter Reset Code")
+                .setView(codeDialogView)
+                .setPositiveButton("Submit", (dialog, which) -> {
+                    String code = editCode.getText().toString().trim();
+                    if (code.isEmpty()) {
+                        Toast.makeText(getContext(), "Enter the code sent to your email", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    showNewPasswordDialog(email, code);
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void showNewPasswordDialog(String email, String code) {
+        View newPassView = LayoutInflater.from(getContext()).inflate(R.layout.new_password_popup, null);
+        EditText editNewPass = newPassView.findViewById(R.id.password);
+        EditText editConfirmPass = newPassView.findViewById(R.id.confirm_password);
+
+        new AlertDialog.Builder(getContext())
+                .setTitle("Set New Password")
+                .setView(newPassView)
+                .setPositiveButton("Submit", (dialog, which) -> {
+                    String pass = editNewPass.getText().toString();
+                    String confirm = editConfirmPass.getText().toString();
+
+                    if (!pass.equals(confirm)) {
+                        Toast.makeText(getContext(), "Passwords do not match", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    JSONObject json = new JSONObject();
+                    try {
+                        json.put("email", email);
+                        json.put("code", code);
+                        json.put("newPassword", pass);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    String url = "https://script.google.com/macros/s/AKfycbxEC6tlQwVkjiq0UV5Gk7BFVzTiOGeOfk3XE93mnkgaBuygDLrzFmR8rL-vr6D05i1IvQ/exec?route=confirmReset";
+
+                    AlertDialog loadingDialog = showLoadingDialog("Updating password...");
+                    JsonObjectRequest request = new JsonObjectRequest(
+                            Request.Method.POST,
+                            url,
+                            json,
+                            response -> {
+                                if (response.has("success")) {
+                                    Toast.makeText(getContext(), "Password updated successfully", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(getContext(), "Reset failed. Check code or try again.", Toast.LENGTH_SHORT).show();
+                                }
+                                loadingDialog.dismiss();
+                            },
+                            error -> {
+                                error.printStackTrace();
+                                Toast.makeText(getContext(), "Error updating password", Toast.LENGTH_SHORT).show();
+                                loadingDialog.dismiss();
+                            });
+
+                    Volley.newRequestQueue(requireContext()).add(request);
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private AlertDialog showLoadingDialog(String message) {
+        View loadingView = LayoutInflater.from(getContext()).inflate(R.layout.loading_dialog, null);
+        TextView textView = loadingView.findViewById(R.id.status_info);
+        textView.setText(message);
+
+        AlertDialog dialog = new AlertDialog.Builder(getContext())
+                .setView(loadingView)
+                .setCancelable(false)
+                .create();
+
+        dialog.show();
+        return dialog;
+    }
+
+
 
     @Override
     public void onDestroyView() {

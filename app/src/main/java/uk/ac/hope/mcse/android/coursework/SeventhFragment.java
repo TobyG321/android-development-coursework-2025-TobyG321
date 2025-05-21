@@ -31,6 +31,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
@@ -236,53 +237,52 @@ public class SeventhFragment extends Fragment {
         titleView.setText(title);
         titleView.setTextColor(Color.parseColor("#5B3000"));
         titleView.setTextSize(14);
-        titleView.setTypeface(null, android.graphics.Typeface.BOLD);
+        titleView.setTypeface(null, Typeface.BOLD);
         layout.addView(titleView);
 
-        if (title.equalsIgnoreCase("Rewards") || title.equalsIgnoreCase("Deals")) {
-            String[] lines = rawContent.split("\n");
-            StringBuilder blockBuilder = new StringBuilder();
+        String[] lines = rawContent.split("\n");
+        StringBuilder blockBuilder = new StringBuilder();
 
-            for (String line : lines) {
-                if (isDealHeader(line)) {
-                    if (blockBuilder.length() > 0) {
-                        if (title.equalsIgnoreCase("Rewards")) {
-                            addRewardBlock(layout, blockBuilder.toString().trim());
-                        } else {
-                            addDealBlock(layout, blockBuilder.toString().trim());
-                        }
-                        blockBuilder.setLength(0);
+        for (String line : lines) {
+            if (line.trim().isEmpty()) continue;
+
+            // Detect section headers (for splitting into blocks)
+            boolean isNewItem = title.equalsIgnoreCase("Items") && line.matches(".* x\\d+");
+            boolean isNewDealOrReward = (title.equalsIgnoreCase("Deals") || title.equalsIgnoreCase("Rewards")) && isDealHeader(line);
+
+            if (isNewItem || isNewDealOrReward) {
+                if (blockBuilder.length() > 0) {
+                    if (title.equalsIgnoreCase("Items")) {
+                        addItemBlock(layout, blockBuilder.toString().trim());
+                    } else if (title.equalsIgnoreCase("Deals")) {
+                        addDealBlock(layout, blockBuilder.toString().trim());
+                    } else if (title.equalsIgnoreCase("Rewards")) {
+                        addRewardBlock(layout, blockBuilder.toString().trim());
                     }
-                }
-                blockBuilder.append(line).append("\n");
-            }
-
-            if (blockBuilder.length() > 0) {
-                if (title.equalsIgnoreCase("Rewards")) {
-                    addRewardBlock(layout, blockBuilder.toString().trim());
-                } else {
-                    addDealBlock(layout, blockBuilder.toString().trim());
+                    blockBuilder.setLength(0);
                 }
             }
 
-        } else {
-            String[] lines = rawContent.split(",");
-            for (String line : lines) {
-                if (!line.trim().isEmpty()) {
-                    TextView itemView = new TextView(getContext());
-                    itemView.setText(line.trim());
-                    itemView.setTextColor(Color.parseColor("#5B3000"));
-                    itemView.setTextSize(14);
-                    layout.addView(itemView);
-                }
-            }
-
-            View spacer = new View(getContext());
-            LinearLayout.LayoutParams spacerParams = new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, 16);
-            spacer.setLayoutParams(spacerParams);
-            layout.addView(spacer);
+            blockBuilder.append(line).append("\n");
         }
+
+        // Add last block
+        if (blockBuilder.length() > 0) {
+            if (title.equalsIgnoreCase("Items")) {
+                addItemBlock(layout, blockBuilder.toString().trim());
+            } else if (title.equalsIgnoreCase("Deals")) {
+                addDealBlock(layout, blockBuilder.toString().trim());
+            } else if (title.equalsIgnoreCase("Rewards")) {
+                addRewardBlock(layout, blockBuilder.toString().trim());
+            }
+        }
+
+        // Optional: space between sections
+        View spacer = new View(getContext());
+        LinearLayout.LayoutParams spacerParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, 16);
+        spacer.setLayoutParams(spacerParams);
+        layout.addView(spacer);
     }
     private void addRewardBlock(LinearLayout layout, String rewardText) {
         String[] lines = rewardText.split("\n");
@@ -397,6 +397,100 @@ public class SeventhFragment extends Fragment {
                 ViewGroup.LayoutParams.MATCH_PARENT, 16);
         spacer.setLayoutParams(spacerParams);
         layout.addView(spacer);
+    }
+    private void addItemBlock(LinearLayout layout, String itemText) {
+        String[] tokens = itemText.split(",");
+        boolean isFirstLine = true;
+        String currentLabel = null;
+        StringBuilder currentValue = new StringBuilder();
+
+        for (int i = 0; i < tokens.length; i++) {
+            String token = tokens[i].trim();
+
+            TextView lineView = new TextView(getContext());
+            lineView.setTextColor(Color.parseColor("#5B3000"));
+            lineView.setTextSize(14);
+            SpannableString styledLine;
+
+            // First line is item name like "Custom Dog x1"
+            if (isFirstLine) {
+                styledLine = new SpannableString("• " + token);
+                styledLine.setSpan(new StyleSpan(Typeface.BOLD), 0, styledLine.length(), 0);
+                lineView.setTextSize(16);
+                lineView.setText(styledLine);
+                layout.addView(lineView);
+                isFirstLine = false;
+                continue;
+            }
+
+            // Handle section header like "Selections:"
+            if (token.equalsIgnoreCase("Selections:")) {
+                combineSelections(layout, currentLabel, currentValue); // write previous
+                currentLabel = null;
+                styledLine = new SpannableString("    Selections:");
+                styledLine.setSpan(new StyleSpan(Typeface.BOLD), 4, 4 + "Selections:".length(), 0);
+                lineView.setText(styledLine);
+                layout.addView(lineView);
+                continue;
+            }
+
+            // If it's a label:value (e.g. "Cheese: Cheddar")
+            if (token.contains(":")) {
+                combineSelections(layout, currentLabel, currentValue);
+                currentLabel = token.substring(0, token.indexOf(":")).trim();
+                currentValue = new StringBuilder(token.substring(token.indexOf(":") + 1).trim());
+                continue;
+            }
+
+            // If it's a new item like "New York x1"
+            if (token.matches(".* x\\d+")) {
+                combineSelections(layout, currentLabel, currentValue);
+                currentLabel = null;
+                styledLine = new SpannableString("• " + token);
+                styledLine.setSpan(new StyleSpan(Typeface.BOLD), 0, styledLine.length(), 0);
+                lineView.setTextSize(16);
+                lineView.setText(styledLine);
+                layout.addView(lineView);
+                continue;
+            }
+
+            // Otherwise, assume it's a continuation of the current label (e.g., more cheeses)
+            if (currentLabel != null) {
+                currentValue.append(", ").append(token);
+            } else {
+                // Fallback for orphaned tokens
+                styledLine = new SpannableString("    " + token);
+                styledLine.setSpan(new StyleSpan(Typeface.BOLD), 4, 4 + token.length(), 0);
+                lineView.setText(styledLine);
+                layout.addView(lineView);
+            }
+        }
+
+        combineSelections(layout, currentLabel, currentValue);
+
+        // Spacer
+        View spacer = new View(getContext());
+        LinearLayout.LayoutParams spacerParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, 16);
+        spacer.setLayoutParams(spacerParams);
+        layout.addView(spacer);
+    }
+
+
+
+    private void combineSelections(LinearLayout layout, String label, StringBuilder value) {
+        if (label == null || value.length() == 0) return;
+
+        TextView lineView = new TextView(layout.getContext());
+        lineView.setTextColor(Color.parseColor("#5B3000"));
+        lineView.setTextSize(14);
+
+        String fullText = "        " + label + ": " + value.toString();
+        SpannableString styledLine = new SpannableString(fullText);
+        styledLine.setSpan(new StyleSpan(Typeface.BOLD), 8, 8 + label.length() + 1, 0);
+
+        lineView.setText(styledLine);
+        layout.addView(lineView);
     }
 
     public void expand(final View view) {

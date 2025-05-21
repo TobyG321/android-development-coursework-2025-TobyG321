@@ -43,8 +43,9 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
+
     private AppBarConfiguration appBarConfiguration;
-    private ActivityMainBinding binding;
+    public static ActivityMainBinding binding;
 
     public static User currentUser;
     public static List<MenuItems> menuItems = new ArrayList<>();
@@ -88,8 +89,15 @@ public class MainActivity extends AppCompatActivity {
                     // Hide FAB completely on FirstFragment
                     if (destId == R.id.FirstFragment) {
                         binding.fab.hide();
+                        binding.logout.setVisibility(View.GONE);
                         binding.toolbar.setVisibility(View.GONE);
                         return;
+                    } else {
+                        binding.logout.setVisibility(View.GONE);
+                        binding.getRoot().postDelayed(() -> {
+                            binding.fab.show();
+                            binding.logout.setVisibility(View.VISIBLE);
+                        }, 700);
                     }
 
                     binding.fab.show();
@@ -142,6 +150,14 @@ public class MainActivity extends AppCompatActivity {
 
         // Fetch Google Sheets Data
         fetchSheetData();
+
+        binding.logout.setOnClickListener(view ->
+                navController.navigate(R.id.action_logout));
+                currentUser = new User();
+                basket = new ArrayList<>();
+                rewards = new ArrayList<>();
+                deals = new ArrayList<>();
+                pastOrders = new ArrayList<>();
     }
 
     private void fetchSheetData() {

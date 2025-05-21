@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.flexbox.FlexboxLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
 import uk.ac.hope.mcse.android.coursework.databinding.FragmentFifthBinding;
@@ -113,10 +114,10 @@ public class FifthFragment extends Fragment {
             imageView.setImageResource(imageResId != 0 ? imageResId : R.drawable.newyork);
 
             populateGrid(gridBread, featuredDog.bread, removedBread, true, false);
-            populateGrid(gridDog, featuredDog.dog, removedDog, true, true);
-            populateGrid(gridCheese, featuredDog.cheese, removedCheese, false, true);
+            populateGrid(gridDog, featuredDog.dog, removedDog, true, false);
+            populateGrid(gridCheese, featuredDog.cheese, removedCheese, false, false);
             populateGrid(gridSauces, featuredDog.sauces, removedSauces, false, false);
-            populateGrid(gridToppings, featuredDog.toppings, removedToppings, false, true);
+            populateGrid(gridToppings, featuredDog.toppings, removedToppings, false, false);
 
             builder.setView(dialogView);
             builder.setPositiveButton("CONFIRM", (popupDialog, which) -> {
@@ -131,6 +132,7 @@ public class FifthFragment extends Fragment {
 
                 Deal deal = new DogOfTheDay(customDog); // ✅ Use constructor that accepts BasketItem
                 MainActivity.deals.add(deal);
+                updateFab();
 
                 Toast.makeText(getContext(), "Dog of the Day added with customisations!", Toast.LENGTH_SHORT).show();
             });
@@ -150,6 +152,7 @@ public class FifthFragment extends Fragment {
                     .setMessage(deal.deal_description + "\n\nPrice: £" + String.format("%.2f", deal.deal_price))
                     .setPositiveButton("CONFIRM", (dialog, which) -> {
                         MainActivity.deals.add(deal);
+                        updateFab();
                         Log.d("Deal", "Deal added: " + deal.deal_name);
                         Toast.makeText(getContext(), "Deal added!", Toast.LENGTH_SHORT).show();
                     })
@@ -167,6 +170,7 @@ public class FifthFragment extends Fragment {
                     .setMessage(deal.deal_description + "\n\nPrice: £" + String.format("%.2f", deal.deal_price))
                     .setPositiveButton("CONFIRM", (dialog, which) -> {
                         MainActivity.deals.add(deal);
+                        updateFab();
                         Log.d("Deal", "Deal added: " + deal.deal_name);
                         Toast.makeText(getContext(), "Deal added!", Toast.LENGTH_SHORT).show();
                     })
@@ -194,6 +198,7 @@ public class FifthFragment extends Fragment {
                 deal.sides = sides;
                 deal.drink = drink;
                 MainActivity.deals.add(deal);
+                updateFab();
                 Toast.makeText(getContext(), "Meal for One added!", Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
             }
@@ -231,6 +236,7 @@ public class FifthFragment extends Fragment {
                             deal.drinks.add(drink2);
 
                             MainActivity.deals.add(deal);
+                            updateFab();
                             Toast.makeText(getContext(), "Meal for Two added!", Toast.LENGTH_SHORT).show();
                             dialog2.dismiss();
                         }
@@ -238,8 +244,6 @@ public class FifthFragment extends Fragment {
                 }
             });
         });
-
-
     }
 
     private void showMealDialog(String title, MenuSelectionCallback2 callback) {
@@ -431,15 +435,17 @@ public class FifthFragment extends Fragment {
         List<String> removedSauces = new ArrayList<>();
         List<String> removedToppings = new ArrayList<>();
 
+        boolean cutsomDog = item.item_name.equals("Custom Dog");
+
         ((TextView) dialogView.findViewById(R.id.hotdog_name)).setText(item.item_name);
         int imageResId = getResources().getIdentifier(item.item_name.toLowerCase().replace(" ", ""), "drawable", getContext().getPackageName());
         ((ImageView) dialogView.findViewById(R.id.hotdog_image)).setImageResource(imageResId != 0 ? imageResId : R.drawable.newyork);
 
         populateGrid(dialogView.findViewById(R.id.grid_bread), item.bread, removedBread, true, false);
-        populateGrid(dialogView.findViewById(R.id.grid_dog), item.dog, removedDog, true, true);
-        populateGrid(dialogView.findViewById(R.id.grid_cheese), item.cheese, removedCheese, false, true);
+        populateGrid(dialogView.findViewById(R.id.grid_dog), item.dog, removedDog, true, cutsomDog);
+        populateGrid(dialogView.findViewById(R.id.grid_cheese), item.cheese, removedCheese, false, cutsomDog);
         populateGrid(dialogView.findViewById(R.id.grid_sauces), item.sauces, removedSauces, false, false);
-        populateGrid(dialogView.findViewById(R.id.grid_toppings), item.toppings, removedToppings, false, true);
+        populateGrid(dialogView.findViewById(R.id.grid_toppings), item.toppings, removedToppings, false, cutsomDog);
 
         new AlertDialog.Builder(getContext())
                 .setView(dialogView)
@@ -485,6 +491,7 @@ public class FifthFragment extends Fragment {
                 button.setText(displayLabel);
                 button.setTextSize(12);
                 button.setAllCaps(true);
+                button.setPadding(5,0,5,0);
 
                 boolean enabled = !removedItems.contains(label);
                 button.setBackgroundResource(enabled ? R.drawable.rounded_container : R.drawable.rounded_container_disabled);
@@ -743,6 +750,15 @@ public class FifthFragment extends Fragment {
                 list.add(trimmed);
             }
         }
+    }
+
+    private void updateFab(){
+        FloatingActionButton fab = MainActivity.binding.fab;
+        fab.setImageResource(R.drawable.cart_fab);
+        fab.setOnClickListener(v1 ->
+                NavHostFragment.findNavController(FifthFragment.this)
+                        .navigate(R.id.action_checkout)
+        );
     }
 
     @Override

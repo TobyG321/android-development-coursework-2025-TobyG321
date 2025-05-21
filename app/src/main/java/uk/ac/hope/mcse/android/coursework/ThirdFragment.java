@@ -368,6 +368,7 @@ public class ThirdFragment extends Fragment {
                 button.setText(displayLabel);
                 button.setTextSize(12);
                 button.setAllCaps(true);
+                button.setPadding(5, 0, 0, 5);
 
                 boolean enabled = !removedItems.contains(label);
                 button.setBackgroundResource(enabled ? R.drawable.rounded_container : R.drawable.rounded_container_disabled);

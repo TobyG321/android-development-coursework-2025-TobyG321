@@ -29,6 +29,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.flexbox.FlexboxLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicReference;
 
+import uk.ac.hope.mcse.android.coursework.databinding.ActivityMainBinding;
 import uk.ac.hope.mcse.android.coursework.databinding.FragmentForthBinding;
 import uk.ac.hope.mcse.android.coursework.model.BasketItem;
 import uk.ac.hope.mcse.android.coursework.model.MenuItems;
@@ -104,6 +106,7 @@ public class ForthFragment extends Fragment {
                     animatePoints(userPointsDisplay, currentPoints, currentPoints - cost);
 
                     MainActivity.rewards.add(new FreeMeal(reward));
+                    updateFab();
                     Toast.makeText(getContext(), "Free meal reward added!", Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
 
@@ -136,11 +139,14 @@ public class ForthFragment extends Fragment {
             if (params == null) {
                 params = new LinearLayout.LayoutParams(
                         ViewGroup.LayoutParams.WRAP_CONTENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT
+                        ViewGroup.LayoutParams.MATCH_PARENT
                 );
             }
+
             if (i == items.size() - 1) {
-                params.setMargins(params.leftMargin, params.topMargin, 0, params.bottomMargin);
+                params.setMargins(params.leftMargin, params.topMargin, 0, 0);
+            } else {
+                params.setMargins(params.leftMargin, params.topMargin, params.rightMargin, 0);
             }
             cardView.setLayoutParams(params);
 
@@ -192,7 +198,7 @@ public class ForthFragment extends Fragment {
                     MainActivity.currentUser.points = newPoints;
 
                     MainActivity.rewards.add(new FreeDog(newItem, roundedPoints));
-
+                    updateFab();
                     animatePoints(userPointsDisplay, currentPoints, newPoints);
                     Toast.makeText(getContext(), item.item_name + " reward added with customisations!", Toast.LENGTH_SHORT).show();
                 });
@@ -263,6 +269,7 @@ public class ForthFragment extends Fragment {
 
                         MainActivity.currentUser.points = currentPoints - cost;
                         MainActivity.rewards.add(new MealUpgrade(basketItem, selectedSides, drink));
+                        updateFab();
                         animatePoints(userPointsDisplay, currentPoints, currentPoints - cost);
                         Toast.makeText(getContext(), "Meal Upgrade applied!", Toast.LENGTH_SHORT).show();
                     })
@@ -317,9 +324,30 @@ public class ForthFragment extends Fragment {
                         .setPositiveButton("Yes", (dialog, which) -> {
                             int newPoints = currentPoints - cost;
                             MainActivity.currentUser.points = newPoints;
-                            MainActivity.rewards.add(new FreeSide(name));
-                            animatePoints(userPointsDisplay, currentPoints, newPoints);
-                            Toast.makeText(getContext(), name + " added!", Toast.LENGTH_SHORT).show();
+
+                            if (name.equalsIgnoreCase("drink")) {
+                                // Prompt for drink selection
+
+                                String[] drinks = {"Coke", "Coke Zero", "Fanta", "Sprite", "Dr Pepper", "Mezzo Mix", "Water", "Milkshake Choc", "Vanilla", "Strawberry", "Coffee", "Tea"};
+
+                                new AlertDialog.Builder(getContext())
+                                        .setTitle("Choose your free drink")
+                                        .setItems(drinks, (d, selected) -> {
+                                            String selectedDrink = drinks[selected];
+                                            MainActivity.rewards.add(new FreeSide(selectedDrink));
+                                            updateFab();
+                                            animatePoints(userPointsDisplay, currentPoints, newPoints);
+                                            Toast.makeText(getContext(), selectedDrink + " added!", Toast.LENGTH_SHORT).show();
+                                        })
+                                        .show();
+
+                            } else {
+                                // Standard side
+                                MainActivity.rewards.add(new FreeSide(name));
+                                updateFab();
+                                animatePoints(userPointsDisplay, currentPoints, newPoints);
+                                Toast.makeText(getContext(), name + " added!", Toast.LENGTH_SHORT).show();
+                            }
                         })
                         .setNegativeButton("Cancel", null)
                         .show();
@@ -432,6 +460,7 @@ public class ForthFragment extends Fragment {
                 button.setText(displayLabel);
                 button.setTextSize(12);
                 button.setAllCaps(true);
+                button.setPadding(5, 0, 5, 0);
 
                 boolean enabled = !removedItems.contains(label);
                 button.setBackgroundResource(enabled ? R.drawable.rounded_container : R.drawable.rounded_container_disabled);
@@ -836,15 +865,17 @@ public class ForthFragment extends Fragment {
         List<String> removedSauces = new ArrayList<>();
         List<String> removedToppings = new ArrayList<>();
 
+        boolean customDog = item.item_name.equals("Custom Dog");
+
         ((TextView) dialogView.findViewById(R.id.hotdog_name)).setText(item.item_name);
         int imageResId = getResources().getIdentifier(item.item_name.toLowerCase().replace(" ", ""), "drawable", getContext().getPackageName());
         ((ImageView) dialogView.findViewById(R.id.hotdog_image)).setImageResource(imageResId != 0 ? imageResId : R.drawable.newyork);
 
         populateGrid(dialogView.findViewById(R.id.grid_bread), item.bread, removedBread, true, false);
-        populateGrid(dialogView.findViewById(R.id.grid_dog), item.dog, removedDog, true, true);
-        populateGrid(dialogView.findViewById(R.id.grid_cheese), item.cheese, removedCheese, false, true);
+        populateGrid(dialogView.findViewById(R.id.grid_dog), item.dog, removedDog, true, customDog);
+        populateGrid(dialogView.findViewById(R.id.grid_cheese), item.cheese, removedCheese, false, customDog);
         populateGrid(dialogView.findViewById(R.id.grid_sauces), item.sauces, removedSauces, false, false);
-        populateGrid(dialogView.findViewById(R.id.grid_toppings), item.toppings, removedToppings, false, true);
+        populateGrid(dialogView.findViewById(R.id.grid_toppings), item.toppings, removedToppings, false, customDog);
 
         new AlertDialog.Builder(getContext())
                 .setView(dialogView)
@@ -856,6 +887,14 @@ public class ForthFragment extends Fragment {
                 .show();
     }
 
+    private void updateFab(){
+        FloatingActionButton fab = MainActivity.binding.fab;
+        fab.setImageResource(R.drawable.cart_fab);
+        fab.setOnClickListener(v1 ->
+                NavHostFragment.findNavController(ForthFragment.this)
+                        .navigate(R.id.action_checkout)
+        );
+    }
 
     @Override
     public void onDestroyView() {
