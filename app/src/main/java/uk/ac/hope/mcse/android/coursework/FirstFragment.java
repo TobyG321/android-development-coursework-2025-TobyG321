@@ -259,18 +259,35 @@ public class FirstFragment extends Fragment {
                     return;
                 }
 
+                if (password.length() < 8 || !password.matches(".*[A-Z].*") || !password.matches(".*[a-z].*") || !password.matches(".*\\d.*")) {
+                    Toast.makeText(getContext(), "Password must be at least 8 characters, include uppercase, lowercase, and number", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 if (!password.equals(confirmPassword)) {
                     Toast.makeText(getContext(), "Passwords do not match", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                if (!email.contains("@") || !email.contains(".")) {
+                if (!email.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$")) {
                     Toast.makeText(getContext(), "Invalid email format", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 if (!mobile.matches("\\d{10,15}")) {
                     Toast.makeText(getContext(), "Enter a valid mobile number", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (editPostcode.getText().toString().trim().isEmpty() ||
+                        editNumber.getText().toString().trim().isEmpty() ||
+                        editStreet.getText().toString().trim().isEmpty()) {
+                    Toast.makeText(getContext(), "Complete all address fields", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (!editPostcode.getText().toString().trim().matches("^[A-Z]{1,2}\\d{1,2}[A-Z]? \\d[A-Z]{2}$")) {
+                    Toast.makeText(getContext(), "Invalid UK postcode format", Toast.LENGTH_SHORT).show();
                     return;
                 }
 

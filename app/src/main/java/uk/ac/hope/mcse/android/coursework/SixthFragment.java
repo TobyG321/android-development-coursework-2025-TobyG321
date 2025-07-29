@@ -20,6 +20,17 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import androidx.core.app.NotificationCompat;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.WorkRequest;
+import java.util.concurrent.TimeUnit;
 
 import java.util.Date;
 import java.text.SimpleDateFormat;
@@ -94,6 +105,12 @@ public class SixthFragment extends Fragment {
                     .setPositiveButton("Yes", (dialog, which) -> placeOrder())
                     .setNegativeButton("No", null)
                     .show();
+        });
+
+        GestureDetector gestureDetector = new GestureDetector(getContext(), new SwipeGestureListener());
+        view.setOnTouchListener((v, event) -> {
+            gestureDetector.onTouchEvent(event);
+            return true;
         });
 
         TextView priceText = view.findViewById(R.id.total_text);
@@ -668,6 +685,55 @@ public class SixthFragment extends Fragment {
         }).start();
     }
 
+    private void sendOrderCompleteNotification() {
+        Intent intent = new Intent(requireContext(), MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(requireContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(requireContext(), MainActivity.CHANNEL_ID)
+                .setSmallIcon(R.drawable.hotdog)
+                .setContentTitle("Order Complete")
+                .setContentText("Thanks for your order! It's now being processed.")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+
+        NotificationManager notificationManager = (NotificationManager) requireContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(new Random().nextInt(), builder.build());
+    }
+
+    private void sendOrderReadyNotification() {
+        Intent intent = new Intent(requireContext(), MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(requireContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(requireContext(), MainActivity.CHANNEL_ID)
+                .setSmallIcon(R.drawable.hotdog) // Replace with your notification icon
+                .setContentTitle("Order Ready")
+                .setContentText("Your order is ready for collection!")
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+
+        NotificationManager notificationManager = (NotificationManager) requireContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(new Random().nextInt(), builder.build());
+    }
+
+    private void startOrderReadyTimer() {
+        new android.os.Handler().postDelayed(() -> {
+            sendOrderReadyNotification();
+        }, 60000); // 20 minutes in milliseconds
+    }
+
+    private void scheduleOrderReadyNotification() {
+        WorkRequest orderReadyWork = new OneTimeWorkRequest.Builder(OrderReadyNotificationWorker.class)
+                .setInitialDelay(1, TimeUnit.MINUTES)
+                .build();
+
+        WorkManager.getInstance(requireContext()).enqueue(orderReadyWork);
+    }
+
+
     private void sendOrderToSheet(String date, String time, String itemQuantity, double finalPrice, Dialog loadingDialog) {
         new Thread(() -> {
             try {
@@ -703,6 +769,9 @@ public class SixthFragment extends Fragment {
                                 MainActivity.currentUser.stamps += 1;
                             }
                         }
+                        sendOrderCompleteNotification();
+                        //startOrderReadyTimer();
+                        scheduleOrderReadyNotification();
 
                         NavHostFragment.findNavController(SixthFragment.this)
                                 .navigate(R.id.action_home);
@@ -844,6 +913,29 @@ public class SixthFragment extends Fragment {
         }
     }
 
+    private class SwipeGestureListener extends GestureDetector.SimpleOnGestureListener {
+
+        private static final int SWIPE_THRESHOLD = 100;
+        private static final int SWIPE_VELOCITY_THRESHOLD = 100;
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            float diffX = e2.getX() - e1.getX();
+
+            if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                if (diffX > 0) {
+                    onSwipeLeft();
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private void onSwipeLeft() {
+            NavHostFragment.findNavController(SixthFragment.this)
+                    .navigate(R.id.action_SixthFragment_to_ThirdFragment);
+        }
+    }
 
     @Override
     public void onDestroyView() {

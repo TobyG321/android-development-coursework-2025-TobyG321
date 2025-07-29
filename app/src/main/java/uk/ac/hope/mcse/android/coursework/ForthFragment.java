@@ -119,6 +119,11 @@ public class ForthFragment extends Fragment {
         LayoutInflater inflater = LayoutInflater.from(getContext());
         List<MenuItems> items = MainActivity.menuItems;
 
+        if (MainActivity.menuItems == null || MainActivity.menuItems.isEmpty()) {
+            Toast.makeText(getContext(), "Menu not available. Try again later.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         for (int i = 0; i < items.size(); i++) {
             MenuItems item = items.get(i);
             View cardView = inflater.inflate(R.layout.reward_card, container, false);
@@ -228,7 +233,7 @@ public class ForthFragment extends Fragment {
                 return;
             }
 
-            BasketItem basketItem = MainActivity.basket.remove(0); // <-- Removed immediately
+            BasketItem basketItem = MainActivity.basket.remove(0);
 
             // Show popup to select sides & drink
             LayoutInflater inflater1 = LayoutInflater.from(getContext());

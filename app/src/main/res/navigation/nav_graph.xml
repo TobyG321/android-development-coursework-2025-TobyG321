@@ -22,7 +22,11 @@
 
         <action
             android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/FirstFragment" />
+            app:destination="@id/FirstFragment"
+            app:enterAnim="@anim/panel_slide_in_up"
+            app:exitAnim="@anim/panel_slide_out_up"
+            app:popEnterAnim="@anim/panel_slide_in_down"
+            app:popExitAnim="@anim/panel_slide_out_down"/>
 
         <action
             android:id="@+id/action_SecondFragment_to_ThirdFragment"
@@ -70,6 +74,14 @@
             app:exitAnim="@anim/panel_slide_out_right"
             app:popEnterAnim="@anim/panel_slide_in_right"
             app:popExitAnim="@anim/panel_slide_out_left"/>
+
+        <action
+            android:id="@+id/action_ThirdFragment_to_SixthFragment"
+            app:destination="@id/SixthFragment"
+            app:enterAnim="@anim/panel_slide_in_right"
+            app:exitAnim="@anim/panel_slide_out_left"
+            app:popEnterAnim="@anim/panel_slide_in_left"
+            app:popExitAnim="@anim/panel_slide_out_right"/>
     </fragment>
 
     <fragment
@@ -115,6 +127,14 @@
         android:name="uk.ac.hope.mcse.android.coursework.SixthFragment"
         android:label="Checkout"
         tools:layout="@layout/fragment_sixth">
+
+        <action
+            android:id="@+id/action_SixthFragment_to_ThirdFragment"
+            app:destination="@id/ThirdFragment"
+            app:enterAnim="@anim/panel_slide_in_left"
+            app:exitAnim="@anim/panel_slide_out_right"
+            app:popEnterAnim="@anim/panel_slide_in_right"
+            app:popExitAnim="@anim/panel_slide_out_left"/>
     </fragment>
 
     <fragment

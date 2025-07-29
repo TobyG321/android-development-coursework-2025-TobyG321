@@ -49,4 +49,5 @@ dependencies {
     annotationProcessor(libs.room.compiler)
     implementation(libs.gridlayout)
     implementation(libs.volley)
+    implementation(libs.work.runtime)
 }

@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -38,6 +39,13 @@ public class SecondFragment extends Fragment {
 
         LinearLayout stampCard = view.findViewById(R.id.stampCard);
         int stamps = MainActivity.currentUser.stamps;
+
+        if (MainActivity.currentUser == null) {
+            Toast.makeText(getContext(), "Session expired. Please log in again.", Toast.LENGTH_SHORT).show();
+            NavHostFragment.findNavController(SecondFragment.this)
+                    .navigate(R.id.action_SecondFragment_to_FirstFragment); // Or your login fragment
+            return;
+        }
 
         for (int i = 0; i < 5; i++) {
             View stampView;

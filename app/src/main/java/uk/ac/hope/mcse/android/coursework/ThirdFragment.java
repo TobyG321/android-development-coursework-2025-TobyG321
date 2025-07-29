@@ -428,8 +428,9 @@ public class ThirdFragment extends Fragment {
             if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
                 if (diffX > 0) {
                     onSwipeRight();
+                } else {
+                    onSwipeLeft();
                 }
-                // Left swipe is ignored
                 return true;
             }
 
@@ -439,6 +440,11 @@ public class ThirdFragment extends Fragment {
         private void onSwipeRight() {
             NavHostFragment.findNavController(ThirdFragment.this)
                     .navigate(R.id.action_ThirdFragment_to_SecondFragment); // Deals
+        }
+
+        private void onSwipeLeft() {
+            NavHostFragment.findNavController(ThirdFragment.this)
+                    .navigate(R.id.action_ThirdFragment_to_SixthFragment);
         }
     }
 
