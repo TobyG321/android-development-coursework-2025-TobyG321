@@ -216,6 +216,8 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
+            menuItems.clear();
+
             String[] rows = result.split("\n");
             if (rows.length < 2) return; // No data
 
