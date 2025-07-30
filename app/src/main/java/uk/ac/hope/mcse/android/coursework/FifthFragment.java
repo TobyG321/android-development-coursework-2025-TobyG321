@@ -130,7 +130,7 @@ public class FifthFragment extends Fragment {
                         removedToppings
                 );
 
-                Deal deal = new DogOfTheDay(customDog); // ✅ Use constructor that accepts BasketItem
+                Deal deal = new DogOfTheDay(customDog);
                 MainActivity.deals.add(deal);
                 updateFab();
 
@@ -182,7 +182,7 @@ public class FifthFragment extends Fragment {
         binding.mealDeal.setOnClickListener(v -> showMealDialog("Meal Deal", new MenuSelectionCallback2() {
             @Override
             public void onHotDogSelected(BasketItem selected, AlertDialog dialog) {
-                // Do nothing – we always use the version with extras
+
             }
 
             @Override
@@ -269,12 +269,12 @@ public class FifthFragment extends Fragment {
             }
         }
 
-        // ✅ Add Custom Dog to USA list
+        // Add Custom Dog to USA list
         MenuItems customDog = new MenuItems();
         customDog.item_name = "Custom Dog";
         customDog.region = "USA";
         customDog.price = 5.00;
-        customDog.bread = "";   // Leave blank to handle dynamically
+        customDog.bread = "";
         customDog.dog = "";
         customDog.cheese = "";
         customDog.sauces = "";
@@ -397,7 +397,7 @@ public class FifthFragment extends Fragment {
 
             card.setOnClickListener(v -> {
                 if (item.item_name.equals("Custom Dog")) {
-                    showCustomDogPopup(callback, dialog); // ✅ pass callback
+                    showCustomDogPopup(callback, dialog);
                 } else {
                     showSelectionDialog(item, callback, dialog);
                 }
@@ -635,7 +635,7 @@ public class FifthFragment extends Fragment {
 
         private void onSwipeLeft() {
             NavHostFragment.findNavController(FifthFragment.this)
-                    .navigate(R.id.action_FifthFragment_to_SecondFragment); // Use a global action if needed
+                    .navigate(R.id.action_FifthFragment_to_SecondFragment);
         }
     }
 
@@ -652,7 +652,7 @@ public class FifthFragment extends Fragment {
         FlexboxLayout gridToppings = dialogView.findViewById(R.id.grid_toppings);
 
         nameTextView.setText("Custom Dog");
-        imageView.setImageResource(R.drawable.newyork); // Default image
+        imageView.setImageResource(R.drawable.newyork);
 
         // Gather all options from existing menu items
         List<String> allBread = new ArrayList<>();

@@ -46,6 +46,7 @@ import java.util.Random;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -63,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
 
     public static AppDatabase db;
 
-    // Replace this with your actual published sheet CSV URL
     private final String SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQhEgMuJQ_lJ5JqY_DETjgReLyv0gfUDTQ5ekY1XDYA_blMWcy566lza95hlJYSnVge7uy31k6nZ0zV/pub?gid=1518700805&single=true&output=csv";
 
     @Override
@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
                                 // Valid only in SecondFragment
                                 binding.fab.setOnClickListener(v -> navController.navigate(R.id.action_SecondFragment_to_ThirdFragment));
                             } else {
-                                // Use global fallback
+                                // Global fallback
                                 binding.fab.setOnClickListener(v -> navController.navigate(R.id.action_menu));
                             }
                         }
@@ -160,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
                 .allowMainThreadQueries()
                 .build();
 
+        menuItems = db.menuDao().getAll();
         UserDao userDao = db.userDao();
 
         // Fetch Google Sheets Data
@@ -210,18 +211,22 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(result);
             Log.d("CSV_RESULT", result);
 
-            // Optional: Parse CSV here and use in app
+            if (result == null || result.trim().isEmpty()) {
+                Toast.makeText(binding.getRoot().getContext(), "Menu not found online. Showing saved items.", Toast.LENGTH_LONG).show();
+                return;
+            }
+
             String[] rows = result.split("\n");
             if (rows.length < 2) return; // No data
 
-            String[] headers = rows[0].split(","); // optional: validate if needed
+            String[] headers = rows[0].split(",");
 
             MenuDao menuDao = db.menuDao();
 
             for (int i = 1; i < rows.length; i++) {
-                String[] cols = rows[i].split(",", -1); // -1 to keep empty fields
+                String[] cols = rows[i].split(",", -1);
 
-                if (cols.length < 4) continue; // skip malformed
+                if (cols.length < 4) continue;
 
                 String itemName = cols[0].trim();
                 String lastUpdate = cols[1].trim();

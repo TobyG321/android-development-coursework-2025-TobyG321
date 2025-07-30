@@ -3,13 +3,15 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
 
+import java.util.List;
+
 @Dao
 public interface MenuDao {
     @Insert
     void insert(MenuItems item);
 
     @Query("SELECT * FROM MenuItems")
-    MenuItems getAll();
+    List<MenuItems> getAll();
 
     @Query("SELECT * FROM MenuItems WHERE item_name = :itemName")
     MenuItems getMenuItemByName(String itemName);

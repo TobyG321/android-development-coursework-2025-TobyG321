@@ -540,7 +540,7 @@ public class SixthFragment extends Fragment {
                     // Navigate to menu fragment on click
                     customizationsView.setOnClickListener(v -> {
                         NavHostFragment.findNavController(SixthFragment.this)
-                                .navigate(R.id.action_menu);  // Make sure this ID is correct in nav_graph.xml
+                                .navigate(R.id.action_menu);
                     });
 
                     imageView.setImageResource(R.drawable.newyork);
@@ -558,7 +558,7 @@ public class SixthFragment extends Fragment {
                             rewards.remove(reward);
                             basketContainer.removeView(rewardHeader);
                             basketContainer.removeView(itemView);
-                            updateTotalPrice(finalBasketItems4, view); // Rewards are free, but good to refresh UI
+                            updateTotalPrice(finalBasketItems4, view);
                             MainActivity.currentUser.points += (int) reward.points_cost;
                         })
                         .setNegativeButton("Cancel", null)
@@ -708,7 +708,7 @@ public class SixthFragment extends Fragment {
         PendingIntent pendingIntent = PendingIntent.getActivity(requireContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(requireContext(), MainActivity.CHANNEL_ID)
-                .setSmallIcon(R.drawable.hotdog) // Replace with your notification icon
+                .setSmallIcon(R.drawable.hotdog)
                 .setContentTitle("Order Ready")
                 .setContentText("Your order is ready for collection!")
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
@@ -719,15 +719,10 @@ public class SixthFragment extends Fragment {
         notificationManager.notify(new Random().nextInt(), builder.build());
     }
 
-    private void startOrderReadyTimer() {
-        new android.os.Handler().postDelayed(() -> {
-            sendOrderReadyNotification();
-        }, 60000); // 20 minutes in milliseconds
-    }
-
+    // Order ready notification simulation. 20 minute duration
     private void scheduleOrderReadyNotification() {
         WorkRequest orderReadyWork = new OneTimeWorkRequest.Builder(OrderReadyNotificationWorker.class)
-                .setInitialDelay(1, TimeUnit.MINUTES)
+                .setInitialDelay(20, TimeUnit.MINUTES)
                 .build();
 
         WorkManager.getInstance(requireContext()).enqueue(orderReadyWork);
@@ -770,7 +765,6 @@ public class SixthFragment extends Fragment {
                             }
                         }
                         sendOrderCompleteNotification();
-                        //startOrderReadyTimer();
                         scheduleOrderReadyNotification();
 
                         NavHostFragment.findNavController(SixthFragment.this)

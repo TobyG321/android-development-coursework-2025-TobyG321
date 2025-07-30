@@ -63,7 +63,7 @@ public class SeventhFragment extends Fragment {
             return true;
         });
 
-        // Check if we already have orders cached
+        // Check if orders cached
         if (!MainActivity.pastOrders.isEmpty()) {
             displayOrders(MainActivity.pastOrders);
             return;
@@ -141,17 +141,17 @@ public class SeventhFragment extends Fragment {
                                         itemsBuilder.append(line).append(", ");
                                         break;
                                     case "deals":
-                                        dealsBuilder.append(line).append("\n");  // Use newline
+                                        dealsBuilder.append(line).append("\n");
                                         break;
                                     case "rewards":
-                                        rewardsBuilder.append(line).append("\n");  // Already correct
+                                        rewardsBuilder.append(line).append("\n");
                                         break;
                                 }
                             }
                         }
 
                         items = itemsBuilder.toString().replaceAll(", $", "").trim();
-                        deals = dealsBuilder.toString().trim();  // Use trimmed newline string
+                        deals = dealsBuilder.toString().trim();
                         rewards = rewardsBuilder.toString().trim();
 
                         fetchedOrders.add(new PastOrder(date, time, items, deals, rewards, cost, orderNumber));
@@ -159,7 +159,7 @@ public class SeventhFragment extends Fragment {
 
                     requireActivity().runOnUiThread(() -> {
                         loadingDialog.dismiss();
-                        MainActivity.pastOrders = fetchedOrders; // cache it
+                        MainActivity.pastOrders = fetchedOrders; // cache orders
                         displayOrders(fetchedOrders);
                     });
                 } else {
@@ -246,7 +246,7 @@ public class SeventhFragment extends Fragment {
         for (String line : lines) {
             if (line.trim().isEmpty()) continue;
 
-            // Detect section headers (for splitting into blocks)
+            // Detect section headers
             boolean isNewItem = title.equalsIgnoreCase("Items") && line.matches(".* x\\d+");
             boolean isNewDealOrReward = (title.equalsIgnoreCase("Deals") || title.equalsIgnoreCase("Rewards")) && isDealHeader(line);
 
@@ -277,7 +277,7 @@ public class SeventhFragment extends Fragment {
             }
         }
 
-        // Optional: space between sections
+        // Space between sections
         View spacer = new View(getContext());
         LinearLayout.LayoutParams spacerParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, 16);
@@ -454,11 +454,11 @@ public class SeventhFragment extends Fragment {
                 continue;
             }
 
-            // Otherwise, assume it's a continuation of the current label (e.g., more cheeses)
+            // Otherwise, assume continuation from current label (e.g., more cheeses)
             if (currentLabel != null) {
                 currentValue.append(", ").append(token);
             } else {
-                // Fallback for orphaned tokens
+                // Fallback
                 styledLine = new SpannableString("    " + token);
                 styledLine.setSpan(new StyleSpan(Typeface.BOLD), 4, 4 + token.length(), 0);
                 lineView.setText(styledLine);
@@ -468,7 +468,6 @@ public class SeventhFragment extends Fragment {
 
         combineSelections(layout, currentLabel, currentValue);
 
-        // Spacer
         View spacer = new View(getContext());
         LinearLayout.LayoutParams spacerParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, 16);

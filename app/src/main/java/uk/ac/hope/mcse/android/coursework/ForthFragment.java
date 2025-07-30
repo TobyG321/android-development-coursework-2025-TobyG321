@@ -78,7 +78,7 @@ public class ForthFragment extends Fragment {
             showMealDialog("Claim Free Meal", new MenuSelectionCallback2() {
                 @Override
                 public void onHotDogSelected(BasketItem selected, AlertDialog dialog) {
-                    // We won't use this for Free Meal – we want extras too
+
                 }
 
                 @Override
@@ -163,7 +163,7 @@ public class ForthFragment extends Fragment {
                     return;
                 }
 
-                // === Show customisation popup first ===
+                // Show customisation popup
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.selection_popup, null);
 
@@ -263,7 +263,7 @@ public class ForthFragment extends Fragment {
 
                         if (side1.equals(side2)) {
                             Toast.makeText(getContext(), "Please select two different sides", Toast.LENGTH_SHORT).show();
-                            // Optionally: Add the item back to the basket if they messed up
+                            // Add the item back to the basket something went wrong
                             MainActivity.basket.add(0, basketItem);
                             return;
                         }
@@ -536,12 +536,12 @@ public class ForthFragment extends Fragment {
             }
         }
 
-        // ✅ Add Custom Dog to USA list
+        // Add Custom Dog to USA list
         MenuItems customDog = new MenuItems();
         customDog.item_name = "Custom Dog";
         customDog.region = "USA";
         customDog.price = 5.00;
-        customDog.bread = "";   // Leave blank to handle dynamically
+        customDog.bread = "";
         customDog.dog = "";
         customDog.cheese = "";
         customDog.sauces = "";
@@ -664,7 +664,7 @@ public class ForthFragment extends Fragment {
 
             card.setOnClickListener(v -> {
                 if (item.item_name.equals("Custom Dog")) {
-                    showCustomDogPopup(callback, dialog); // ✅ pass callback
+                    showCustomDogPopup(callback, dialog);
                 } else {
                     showSelectionDialog(item, callback, dialog);
                 }
@@ -724,7 +724,7 @@ public class ForthFragment extends Fragment {
         FlexboxLayout gridToppings = dialogView.findViewById(R.id.grid_toppings);
 
         nameTextView.setText("Custom Dog");
-        imageView.setImageResource(R.drawable.newyork); // Default image
+        imageView.setImageResource(R.drawable.newyork);
 
         // Gather all options from existing menu items
         List<String> allBread = new ArrayList<>();

@@ -156,7 +156,6 @@ public class FirstFragment extends Fragment {
             queue.add(request);
         });
 
-        // ✅ Mutable reference
         final String[] selectedAddress = {""};
 
         binding.buttonCreateAccount.setOnClickListener(v -> {
@@ -204,7 +203,6 @@ public class FirstFragment extends Fragment {
 
                                     String street = selected.getThoroughfare() != null ? selected.getThoroughfare() : "";
 
-                                    // Better town extraction using address line
                                     String fullLine = selected.getAddressLine(0);
                                     String town = "";
                                     String postcodeFinal = selected.getPostalCode() != null ? selected.getPostalCode() : "";
@@ -313,7 +311,7 @@ public class FirstFragment extends Fragment {
                 JSONObject jsonBody = new JSONObject();
                 try {
                     jsonBody.put("username", username);
-                    jsonBody.put("password", password); // optional - be careful if sensitive
+                    jsonBody.put("password", password);
                     jsonBody.put("mobile", mobile);
                     jsonBody.put("email", email);
                     jsonBody.put("address", address);

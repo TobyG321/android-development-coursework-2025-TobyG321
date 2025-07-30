@@ -43,7 +43,7 @@ public class SecondFragment extends Fragment {
         if (MainActivity.currentUser == null) {
             Toast.makeText(getContext(), "Session expired. Please log in again.", Toast.LENGTH_SHORT).show();
             NavHostFragment.findNavController(SecondFragment.this)
-                    .navigate(R.id.action_SecondFragment_to_FirstFragment); // Or your login fragment
+                    .navigate(R.id.action_SecondFragment_to_FirstFragment);
             return;
         }
 
@@ -59,7 +59,7 @@ public class SecondFragment extends Fragment {
         // Set up gesture detector
         gestureDetector = new GestureDetector(getContext(), new SwipeGestureListener());
 
-        // Attach gesture detector to transparent overlay view
+        // Attach gesture detector to transparent overlay
         view.setOnTouchListener((v, event) -> {
             gestureDetector.onTouchEvent(event);
             return true;

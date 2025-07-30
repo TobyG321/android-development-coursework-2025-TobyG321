@@ -139,13 +139,13 @@ public class ThirdFragment extends Fragment {
             customDog.item_name = "Custom Dog";
             customDog.region = "USA";
             customDog.price = 5.00;
-            customDog.bread = "";   // will be dynamically collected in popup
+            customDog.bread = "";
             customDog.dog = "";
             customDog.cheese = "";
             customDog.sauces = "";
             customDog.toppings = "";
 
-            selectedList.add(0, customDog); // Add to top of list
+            selectedList.add(0, customDog);
         } else if (region.equals("Latin America")) {
             selectedList = new ArrayList<>(south);
         } else {
@@ -290,7 +290,7 @@ public class ThirdFragment extends Fragment {
                                         }
                                     }
 
-                                    // Otherwise, proceed with normal basket logic
+                                    // Otherwise proceed with normal basket logic
                                     for (BasketItem basketItem : MainActivity.basket) {
                                         if (basketItem.isEqualTo(newItem)) {
                                             basketItem.quantity++;
@@ -461,7 +461,7 @@ public class ThirdFragment extends Fragment {
         FlexboxLayout gridToppings = dialogView.findViewById(R.id.grid_toppings);
 
         nameTextView.setText("Custom Dog");
-        imageView.setImageResource(R.drawable.newyork); // or your custom image
+        imageView.setImageResource(R.drawable.newyork);
 
         // Gather unique options
         List<String> allBread = new ArrayList<>();
