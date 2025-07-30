@@ -475,8 +475,6 @@ public class SeventhFragment extends Fragment {
         layout.addView(spacer);
     }
 
-
-
     private void combineSelections(LinearLayout layout, String label, StringBuilder value) {
         if (label == null || value.length() == 0) return;
 

@@ -9,16 +9,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
-import androidx.navigation.NavDestination;
-import androidx.navigation.NavHostController;
 import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.room.Room;
@@ -43,6 +38,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicReference;
+
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
@@ -83,9 +80,9 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        AtomicReference<NavController> navController = new AtomicReference<>(Navigation.findNavController(this, R.id.nav_host_fragment_content_main));
+        appBarConfiguration = new AppBarConfiguration.Builder(navController.get().getGraph()).build();
+        NavigationUI.setupActionBarWithNavController(this, navController.get(), appBarConfiguration);
 
         binding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        navController.addOnDestinationChangedListener(
+        navController.get().addOnDestinationChangedListener(
                 (controller, destination, arguments) -> {
                     int destId = destination.getId();
 
@@ -128,26 +125,26 @@ public class MainActivity extends AppCompatActivity {
                     if (destId == R.id.SixthFragment) {
                         // Always show home icon in checkout
                         binding.fab.setImageResource(R.drawable.home_fab);
-                        binding.fab.setOnClickListener(v -> navController.navigate(R.id.action_home));
+                        binding.fab.setOnClickListener(v -> navController.get().navigate(R.id.action_home));
                     } else if (destId == R.id.ThirdFragment) {
                         // Always show basket icon on menu
                         binding.fab.setImageResource(R.drawable.cart_fab);
-                        binding.fab.setOnClickListener(v -> navController.navigate(R.id.action_checkout));
+                        binding.fab.setOnClickListener(v -> navController.get().navigate(R.id.action_checkout));
                     } else if (destId == R.id.SecondFragment ||
                             destId == R.id.ForthFragment ||
                             destId == R.id.FifthFragment ||
                             destId == R.id.SeventhFragment) {
                         if (basketNotEmpty || dealNotEmpty || rewardNotEmpty) {
                             binding.fab.setImageResource(R.drawable.cart_fab);
-                            binding.fab.setOnClickListener(v -> navController.navigate(R.id.action_checkout));
+                            binding.fab.setOnClickListener(v -> navController.get().navigate(R.id.action_checkout));
                         } else {
                             binding.fab.setImageResource(R.drawable.hotdog_fab);
                             if (destId == R.id.SecondFragment) {
                                 // Valid only in SecondFragment
-                                binding.fab.setOnClickListener(v -> navController.navigate(R.id.action_SecondFragment_to_ThirdFragment));
+                                binding.fab.setOnClickListener(v -> navController.get().navigate(R.id.action_SecondFragment_to_ThirdFragment));
                             } else {
                                 // Global fallback
-                                binding.fab.setOnClickListener(v -> navController.navigate(R.id.action_menu));
+                                binding.fab.setOnClickListener(v -> navController.get().navigate(R.id.action_menu));
                             }
                         }
                     }
@@ -166,13 +163,21 @@ public class MainActivity extends AppCompatActivity {
         // Fetch Google Sheets Data
         fetchSheetData();
 
-        binding.logout.setOnClickListener(view ->
-                navController.navigate(R.id.action_logout));
-                currentUser = new User();
-                basket = new ArrayList<>();
-                rewards = new ArrayList<>();
-                deals = new ArrayList<>();
-                pastOrders = new ArrayList<>();
+        binding.logout.setOnClickListener(view -> {
+            currentUser = new User();
+            MainActivity.basket.clear();
+            MainActivity.pastOrders.clear();
+
+            // Get NavController
+            navController.set(Navigation.findNavController(this, R.id.nav_host_fragment_content_main));
+
+            // Clear entire back stack
+            navController.get().popBackStack(navController.get().getGraph().getStartDestinationId(), true);
+
+            // Navigate fresh to FirstFragment
+            navController.get().navigate(R.id.FirstFragment);
+        });
+
     }
 
     private void fetchSheetData() {
@@ -323,15 +328,10 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-
         if (id == R.id.action_settings) {
             return true;
         } else if (id == R.id.action_logout) {
             currentUser = new User();
-            basket = new ArrayList<>();
-            rewards = new ArrayList<>();
-            deals = new ArrayList<>();
-            pastOrders = new ArrayList<>();
 
             NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
             navController.navigate(R.id.FirstFragment);

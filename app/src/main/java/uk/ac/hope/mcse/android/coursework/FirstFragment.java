@@ -107,7 +107,7 @@ public class FirstFragment extends Fragment {
             }
 
             RequestQueue queue = Volley.newRequestQueue(requireContext());
-            String url = "https://script.google.com/macros/s/AKfycbyh9T7br3EvMc5QUUIBIEt4cqAI672IF9fq3YDnIIdwasjgPBCG-A84pRd5pdSBnOop6w/exec?route=login";
+            String url = "https://script.google.com/macros/s/AKfycbyZ6vnvQ1h7CBkrKW5fPFaMK32fYcoHxMOKWM-15aPEP5VWbtFXzhKApVxxUJxs1zh4lg/exec?route=login";
 
             JsonObjectRequest request = new JsonObjectRequest(
                     Request.Method.POST,
@@ -289,52 +289,98 @@ public class FirstFragment extends Fragment {
                     return;
                 }
 
-                User newUser = new User();
-                newUser.username = username;
-                newUser.password = password;
-                newUser.mobile = mobile;
-                newUser.email = email;
-                newUser.address = address;
-
-                AppDatabase db = Room.databaseBuilder(requireContext(),
-                                AppDatabase.class, "UpDoggData")
-                        .fallbackToDestructiveMigration()
-                        .allowMainThreadQueries()
-                        .build();
-
-                db.userDao().insert(newUser);
-
-                Toast.makeText(getContext(), "Account created for: " + username, Toast.LENGTH_SHORT).show();
-                dialog.dismiss();
-
-                // Build JSON object
-                JSONObject jsonBody = new JSONObject();
+                // Check if email is already registered
+                JSONObject checkEmailJson = new JSONObject();
                 try {
-                    jsonBody.put("username", username);
-                    jsonBody.put("password", password);
-                    jsonBody.put("mobile", mobile);
-                    jsonBody.put("email", email);
-                    jsonBody.put("address", address);
-                    jsonBody.put("stamps", 0);
-                    jsonBody.put("points", 0);
+                    checkEmailJson.put("email", email);
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    Toast.makeText(getContext(), "Failed to check email", Toast.LENGTH_SHORT).show();
+                    return;
                 }
 
-                // Send to Google Sheets using POST
-                RequestQueue queue = Volley.newRequestQueue(requireContext());
+                AlertDialog loadingDialog = showLoadingDialog("Checking email...");
+                String checkEmailUrl = "https://script.google.com/macros/s/AKfycbyZ6vnvQ1h7CBkrKW5fPFaMK32fYcoHxMOKWM-15aPEP5VWbtFXzhKApVxxUJxs1zh4lg/exec?route=checkEmail";
 
-                String url = "https://script.google.com/macros/s/AKfycbyh9T7br3EvMc5QUUIBIEt4cqAI672IF9fq3YDnIIdwasjgPBCG-A84pRd5pdSBnOop6w/exec?route=register";
-                JsonObjectRequest request = new JsonObjectRequest(
+                JsonObjectRequest checkRequest = new JsonObjectRequest(
                         Request.Method.POST,
-                        url,
-                        jsonBody,
-                        response -> Log.d("SHEETS", "Success: " + response.toString()),
-                        error -> Log.e("SHEETS", "Error sending to Sheets: " + error.toString())
+                        checkEmailUrl,
+                        checkEmailJson,
+                        checkResponse -> {
+                            loadingDialog.dismiss();
+                            try {
+                                if (checkResponse.getBoolean("exists")) {
+                                    Toast.makeText(getContext(), "Email already registered", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    // Proceed with registration
+                                    User newUser = new User();
+                                    newUser.username = username;
+                                    newUser.password = password;
+                                    newUser.mobile = mobile;
+                                    newUser.email = email;
+                                    newUser.address = address;
+
+                                    AppDatabase db = Room.databaseBuilder(requireContext(),
+                                                    AppDatabase.class, "UpDoggData")
+                                            .fallbackToDestructiveMigration()
+                                            .allowMainThreadQueries()
+                                            .build();
+
+                                    db.userDao().insert(newUser);
+
+                                    Toast.makeText(getContext(), "Account created for: " + username, Toast.LENGTH_SHORT).show();
+                                    dialog.dismiss();
+
+                                    JSONObject jsonBody = new JSONObject();
+                                    try {
+                                        jsonBody.put("username", username);
+                                        jsonBody.put("password", password);
+                                        jsonBody.put("mobile", mobile);
+                                        jsonBody.put("email", email);
+                                        jsonBody.put("address", address);
+                                        jsonBody.put("stamps", 0);
+                                        jsonBody.put("points", 0);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    String registerUrl = "https://script.google.com/macros/s/AKfycbyZ6vnvQ1h7CBkrKW5fPFaMK32fYcoHxMOKWM-15aPEP5VWbtFXzhKApVxxUJxs1zh4lg/exec?route=register";
+                                    JsonObjectRequest registerRequest = new JsonObjectRequest(
+                                            Request.Method.POST,
+                                            registerUrl,
+                                            jsonBody,
+                                            response -> Log.d("SHEETS", "Success: " + response.toString()),
+                                            error -> {
+                                                loadingDialog.dismiss();
+
+                                                if (error.networkResponse != null) {
+                                                    int statusCode = error.networkResponse.statusCode;
+                                                    String errorBody = new String(error.networkResponse.data);
+                                                    Log.e("EMAIL_CHECK_HTTP", "Status Code: " + statusCode);
+                                                    Log.e("EMAIL_CHECK_BODY", errorBody);
+                                                } else {
+                                                    Log.e("EMAIL_CHECK", "No network response");
+                                                }
+
+                                                Toast.makeText(getContext(), "Error checking email", Toast.LENGTH_SHORT).show();
+                                            }
+                                    );
+
+                                    Volley.newRequestQueue(requireContext()).add(registerRequest);
+                                }
+                            } catch (JSONException e) {
+                                Toast.makeText(getContext(), "Email check failed", Toast.LENGTH_SHORT).show();
+                                e.printStackTrace();
+                            }
+                        },
+                        error -> {
+                            loadingDialog.dismiss();
+                            Toast.makeText(getContext(), "Error checking email", Toast.LENGTH_SHORT).show();
+                            error.printStackTrace();
+                        }
                 );
 
-                queue.add(request);
-
+                Volley.newRequestQueue(requireContext()).add(checkRequest);
             });
 
             dialog.show();
